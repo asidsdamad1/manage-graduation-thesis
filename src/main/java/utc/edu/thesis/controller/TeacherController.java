@@ -3,6 +3,7 @@ package utc.edu.thesis.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.TeacherDto;
 import utc.edu.thesis.domain.entity.Teacher;
 import utc.edu.thesis.service.TeacherService;
@@ -28,5 +29,20 @@ public class TeacherController {
     @PostMapping("/add-teacher")
     public ResponseEntity<TeacherDto> addTeacher(@RequestBody TeacherDto dto) {
         return ResponseEntity.ok(teacherService.addTeacher(dto));
+    }
+
+    @PostMapping("/delete-teacher/{id}")
+    public ResponseEntity<Boolean> deleteTeacher(@PathVariable Long id) {
+        return ResponseEntity.ok(teacherService.deleteTeacher(id));
+    }
+
+    @PostMapping("/edit-teacher")
+    public ResponseEntity<TeacherDto> editTeacher(@RequestBody TeacherDto dto) {
+        return ResponseEntity.ok(teacherService.editTeacher(dto));
+    }
+
+    @PostMapping("/get-teacher")
+    public ResponseEntity<List<TeacherDto>> getTeacher(@RequestBody SearchDto payload) {
+        return ResponseEntity.ok(teacherService.getTeacher(payload));
     }
 }

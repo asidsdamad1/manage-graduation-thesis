@@ -17,8 +17,13 @@ public class TeacherDto {
     private String address;
     private String phone;
     private String email;
+    private String text;
 
     public static TeacherDto of(Teacher entity) {
         return ObjectMapperUtil.OBJECT_MAPPER.convertValue(entity, TeacherDto.class);
+    }
+
+    public static Teacher toEntity(TeacherDto dto) {
+        return ObjectMapperUtil.OBJECT_MAPPER.convertValue(dto, Teacher.class);
     }
 }

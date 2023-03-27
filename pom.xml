@@ -11,8 +11,8 @@
     <groupId>utc.edu</groupId>
     <artifactId>HoNgheo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>HoNgheo</name>
-    <description>HoNgheo</description>
+    <name>manager-thesis</name>
+    <description>manager thesis</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>

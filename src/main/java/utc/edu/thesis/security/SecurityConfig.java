@@ -23,7 +23,6 @@ import utc.edu.thesis.service.Impl.UserService;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
