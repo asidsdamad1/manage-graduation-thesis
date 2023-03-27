@@ -9,6 +9,7 @@ import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.TeacherDto;
 import utc.edu.thesis.domain.entity.Teacher;
 import utc.edu.thesis.exception.request.BadRequestException;
+import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.TeacherRepository;
 import utc.edu.thesis.service.TeacherService;
 
@@ -88,7 +89,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<TeacherDto> getTeacher(SearchDto dto) {
         if(dto == null) {
-            return null;
+            throw new NotFoundException("not found");
         }
 
         String whereClause = "";
@@ -102,12 +103,6 @@ public class TeacherServiceImpl implements TeacherService {
                 whereClause += "AND e.email like '%" + dto.getValueSearch() +"%'";
             } else if("PHONE".equals(dto.getConditionSearch())) {
                 whereClause += "AND e.phone like '%" + dto.getValueSearch() +"%'";
-            } else {
-                whereClause += "AND (e.fullName like '%" + dto.getValueSearch() +"%'" +
-                        "OR e.email like '%" + dto.getValueSearch() +"%'" +
-                        "OR e.phone like '%" + dto.getValueSearch() +"%'" +
-                        "OR e.address like '%" + dto.getValueSearch() +"%'" +
-                        "OR e.dob like '%" + dto.getValueSearch() +"%')";
             }
         }
         sql += whereClause + orderBy;

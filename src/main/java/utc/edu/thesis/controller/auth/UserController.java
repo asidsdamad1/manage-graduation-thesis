@@ -1,4 +1,4 @@
-package utc.edu.thesis.controller;
+package utc.edu.thesis.controller.auth;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
