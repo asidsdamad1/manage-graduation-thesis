@@ -17,10 +17,10 @@ import utc.edu.thesis.domain.entity.JwtResponse;
 import utc.edu.thesis.domain.entity.OldPassword;
 import utc.edu.thesis.domain.entity.Role;
 import utc.edu.thesis.domain.entity.User;
-import utc.edu.thesis.service.Impl.JwtService;
-import utc.edu.thesis.service.Impl.OldPasswordService;
-import utc.edu.thesis.service.Impl.RoleService;
-import utc.edu.thesis.service.Impl.UserService;
+import utc.edu.thesis.service.impl.JwtService;
+import utc.edu.thesis.service.impl.OldPasswordService;
+import utc.edu.thesis.service.impl.RoleService;
+import utc.edu.thesis.service.impl.UserService;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

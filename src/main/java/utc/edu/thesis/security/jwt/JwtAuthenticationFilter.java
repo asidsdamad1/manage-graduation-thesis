@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import utc.edu.thesis.service.IUserService;
-import utc.edu.thesis.service.Impl.JwtService;
+import utc.edu.thesis.service.impl.JwtService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

@@ -1,10 +1,9 @@
-package utc.edu.thesis.service.Impl;
+package utc.edu.thesis.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import utc.edu.thesis.domain.dto.SearchDto;
-import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.domain.entity.StudentClass;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.StudentClassRepository;

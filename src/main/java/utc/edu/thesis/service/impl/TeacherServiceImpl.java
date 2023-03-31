@@ -1,4 +1,4 @@
-package utc.edu.thesis.service.Impl;
+package utc.edu.thesis.service.impl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
