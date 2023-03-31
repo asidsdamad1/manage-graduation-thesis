@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -21,6 +22,9 @@ public class Session {
 
     @Column(name = "year")
     private Integer year;
+
+    @Column(name = "created_by")
+    private String createdBy;
 
     @Column(name = "notes")
     private String notes;

@@ -1,4 +1,4 @@
-package utc.edu.thesis.service.Impl;
+package utc.edu.thesis.service.impl;
 
 import org.springframework.stereotype.Service;
 import utc.edu.thesis.service.ReminderService;

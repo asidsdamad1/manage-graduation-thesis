@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.TeacherDto;
-import utc.edu.thesis.domain.entity.Assign;
+import utc.edu.thesis.domain.entity.Assignment;
 import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
-import utc.edu.thesis.repository.AssignRepository;
-import utc.edu.thesis.service.AssignService;
+import utc.edu.thesis.repository.AssignmentRepository;
+import utc.edu.thesis.service.AssignmentService;
 import utc.edu.thesis.service.StudentService;
 import utc.edu.thesis.service.TeacherService;
 
@@ -21,28 +21,28 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AssignServiceImpl implements AssignService {
-    private final AssignRepository assignRepository;
+public class AssignmentServiceImpl implements AssignmentService {
+    private final AssignmentRepository assignmentRepository;
     private final UserService userService;
     private final StudentService studentService;
     private final TeacherService teacherService;
     private final EntityManager entityManager;
 
     @Override
-    public Assign addAssign(Assign request) {
+    public Assignment addAssign(Assignment request) {
         if (request != null) {
             if (studentService.findByCode(request.getStudent().getCode()) != null) {
                 throw new BadRequestException("Student with code: %s existed".formatted(request.getStudent().getCode()));
             }
 
-            Assign assign = Assign.builder()
+            Assignment assignment = Assignment.builder()
                     .createdDate(LocalDateTime.now())
                     .createdBy(userService.getCurrentUser().getUsername())
                     .teacher(request.getTeacher())
                     .student(request.getStudent())
                     .build();
 
-            assignRepository.save(assign);
+            assignmentRepository.save(assignment);
         }
         return null;
     }
@@ -50,11 +50,11 @@ public class AssignServiceImpl implements AssignService {
     @Override
     public Boolean deleteAssign(Long id) {
         if (id != null) {
-            Assign res = assignRepository.findById(id).orElseThrow(() -> {
+            Assignment res = assignmentRepository.findById(id).orElseThrow(() -> {
                 throw new NotFoundException("not found id: %d".formatted(id));
             });
             if (res != null) {
-                assignRepository.delete(res);
+                assignmentRepository.delete(res);
                 return true;
             }
         }
@@ -62,14 +62,14 @@ public class AssignServiceImpl implements AssignService {
     }
 
     @Override
-    public List<Assign> getAssign(SearchDto dto) {
+    public List<Assignment> getAssign(SearchDto dto) {
         if (dto == null) {
             throw new NotFoundException("not found");
         }
 
         String whereClause = "";
         String orderBy = " ";
-        String sql = "select e from Assign as e where(1=1) ";
+        String sql = "select e from Assignment as e where(1=1) ";
         if (StringUtils.hasText(dto.getValueSearch())) {
             List<TeacherDto> teacher = teacherService.getTeacher(new SearchDto(dto.getValueSearch(), dto.getConditionSearch()));
 
@@ -81,5 +81,11 @@ public class AssignServiceImpl implements AssignService {
         Query q = entityManager.createQuery(sql, Student.class);
 
         return q.getResultList();
+    }
+
+    @Override
+    public Integer countAssignmentBySession(Long sessionId) {
+
+        return assignmentRepository.countAssignmentBySession(sessionId);
     }
 }

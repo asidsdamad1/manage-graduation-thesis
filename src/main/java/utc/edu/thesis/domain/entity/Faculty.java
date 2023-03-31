@@ -10,6 +10,6 @@ public class Faculty {
     private Long id;
     @Column(name = "name")
     private String name;
-    @Column(name = "describe")
-    private String describe;
+    @Column(name = "describer")
+    private String describer;
 }

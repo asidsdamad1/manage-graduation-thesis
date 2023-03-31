@@ -6,33 +6,35 @@ import org.springframework.util.StringUtils;
 import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.SessionDto;
 import utc.edu.thesis.domain.entity.Session;
-import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.SessionRepository;
+import utc.edu.thesis.service.AssignmentService;
 import utc.edu.thesis.service.SessionService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
+    private final AssignmentService assignmentService;
     private final EntityManager entityManager;
 
     @Override
-    public Session addSession(Session request) {
+    public SessionDto addSession(SessionDto request) {
         Session session = Session.builder()
                 .year(request.getYear())
                 .notes(request.getNotes())
                 .build();
 
-        return sessionRepository.save(session);
+        return SessionDto.of(sessionRepository.save(session));
     }
 
     @Override
-    public Session editSession(Session request) {
+    public SessionDto editSession(SessionDto request) {
         if (request.getId() != null) {
             Session response = sessionRepository.findById(request.getId()).orElseThrow(() -> {
                 throw new NotFoundException("not found id: %d".formatted(request.getId()));
@@ -44,7 +46,7 @@ public class SessionServiceImpl implements SessionService {
                     .notes(request.getNotes())
                     .build();
 
-            return sessionRepository.save(session);
+            return SessionDto.of(sessionRepository.save(session));
         }
         return null;
     }
@@ -71,15 +73,22 @@ public class SessionServiceImpl implements SessionService {
 
         String whereClause = "";
         String orderBy = " ";
-        String sql = "select e from Session as e where(1=1) ";
+        String sql = "select e from Session as e where (1=1) ";
         if (StringUtils.hasText(dto.getValueSearch())) {
             if ("YEAR".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.year = " + dto.getValueSearch();
             }
         }
         sql += whereClause + orderBy;
-        Query q = entityManager.createQuery(sql, Student.class);
+        Query q = entityManager.createQuery(sql, Session.class);
+        List<Session> sessions = q.getResultList();
+        List<SessionDto> resultList = new ArrayList<>();
+        sessions.forEach(res -> {
+            SessionDto sessionDto = SessionDto.of(res);
+            sessionDto.setAmount(assignmentService.countAssignmentBySession(res.getId()));
+            resultList.add(sessionDto);
+        });
 
-        return q.getResultList();
+        return resultList;
     }
 }

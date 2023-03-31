@@ -9,6 +9,7 @@ public class SessionDto {
     private Long id;
     private Integer year;
     private String notes;
+    private String createdBy;
     private Integer amount;
 
     public static SessionDto of(Session entity) {
