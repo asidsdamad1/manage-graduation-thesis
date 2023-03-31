@@ -3,6 +3,7 @@ package utc.edu.thesis.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import utc.edu.thesis.domain.dto.AssignmentDto;
 import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.TeacherDto;
 import utc.edu.thesis.domain.entity.Assignment;
@@ -17,6 +18,7 @@ import utc.edu.thesis.service.TeacherService;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -62,7 +64,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public List<Assignment> getAssign(SearchDto dto) {
+    public List<AssignmentDto> getAssign(SearchDto dto) {
         if (dto == null) {
             throw new NotFoundException("not found");
         }
@@ -72,15 +74,35 @@ public class AssignmentServiceImpl implements AssignmentService {
         String sql = "select e from Assignment as e where(1=1) ";
         if (StringUtils.hasText(dto.getValueSearch())) {
             List<TeacherDto> teacher = teacherService.getTeacher(new SearchDto(dto.getValueSearch(), dto.getConditionSearch()));
-
             if ("EMAIL".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.teacher_id = " + teacher.get(0).getId();
+            } else if ("SESSION".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.session.id = " + dto.getValueSearch();
+            } else if ("ID".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.id = " + dto.getValueSearch();
             }
         }
         sql += whereClause + orderBy;
-        Query q = entityManager.createQuery(sql, Student.class);
+        Query q = entityManager.createQuery(sql, Assignment.class);
+        List<Assignment> resultQuery = q.getResultList();
+        List<AssignmentDto> res = new ArrayList<>();
+        resultQuery.forEach(assignment -> res.add(AssignmentDto.of(assignment)));
 
-        return q.getResultList();
+        return res;
+    }
+
+    @Override
+    public List<TeacherDto> getTeacher(List<AssignmentDto> assignments) {
+        List<TeacherDto> res = new ArrayList<>();
+        assignments.forEach(assignmentDto -> {
+            SearchDto searchDto = SearchDto.builder()
+                    .conditionSearch("ID")
+                    .valueSearch(String.valueOf(assignmentDto.getTeacher().getId()))
+                    .build();
+            res.addAll( teacherService.getTeacher(searchDto));
+        });
+
+        return res;
     }
 
     @Override

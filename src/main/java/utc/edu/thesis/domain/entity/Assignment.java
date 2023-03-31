@@ -26,7 +26,7 @@ public class Assignment {
     private String createdBy;
 
     @ManyToOne
-    @JoinColumn(name = "session")
+    @JoinColumn(name = "session_id")
     private Session session;
 
     @OneToOne

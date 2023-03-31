@@ -14,9 +14,9 @@ public class AssignmentDto {
     private Long id;
     private LocalDateTime createdDate;
     private String createdBy;
-    private Session session;
-    private Student student;
-    private Teacher teacher;
+    private SessionDto session;
+    private StudentDto student;
+    private TeacherDto teacher;
     private Integer amount;
 
     public static AssignmentDto of(Assignment entity) {
