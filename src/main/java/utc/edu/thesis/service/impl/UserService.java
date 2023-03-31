@@ -1,6 +1,8 @@
-package utc.edu.thesis.service.Impl;
+package utc.edu.thesis.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -103,5 +105,24 @@ public class UserService implements IUserService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(), enable, accountNonExpired, credentialsNonExpired,
                 accountNonLocked, null);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String userName = null;
+        if (principal instanceof UserDetails) {
+            UserDetails userDetail = (UserDetails)principal;
+            userName = userDetail.getUsername();
+        } else {
+            userName = principal.toString();
+        }
+
+        if (userName != null) {
+            return this.iUserRepo.findByUsername(userName);
+        }
+
+        return null;
     }
 }

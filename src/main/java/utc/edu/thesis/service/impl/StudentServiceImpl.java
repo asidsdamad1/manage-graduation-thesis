@@ -1,4 +1,4 @@
-package utc.edu.thesis.service.Impl;
+package utc.edu.thesis.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,10 +30,11 @@ public class StudentServiceImpl implements StudentService {
                     throw new BadRequestException("Can't not find teacher by Id: %d".formatted(id));
                 });
     }
+
     @Override
     public StudentDto addStudent(StudentDto dto) {
         if (dto != null) {
-            if(studentRepository.findByCode(dto.getCode()) != null) {
+            if (studentRepository.findByCode(dto.getCode()).isPresent()) {
                 throw new BadRequestException("Student with code: %s existed".formatted(dto.getCode()));
             }
 
@@ -58,7 +59,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Boolean deleteStudent(Long id) {
         if (id != null) {
-            StudentDto res =  getById(id);
+            StudentDto res = getById(id);
             if (res != null) {
                 studentRepository.delete(StudentDto.toEntity(res));
                 return true;
@@ -69,10 +70,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDto editStudent(StudentDto dto) {
-        if (dto.getId() == null) {
-            throw new BadRequestException("Id is null");
+
+        if (dto.getCode() == null) {
+
+            throw new BadRequestException("Code is null");
+
         }
-        StudentDto response = getById(dto.getId());
+        StudentDto response = findByCode(dto.getCode());
 
         Student entity = Student.builder()
                 .id(response.getId())
@@ -91,26 +95,26 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentDto> getStudent(SearchDto dto) {
-        if(dto == null) {
+        if (dto == null) {
             throw new NotFoundException("not found");
         }
 
         String whereClause = "";
         String orderBy = " ";
         String sql = "select e from Student as e where(1=1) ";
-        if(StringUtils.hasText(dto.getValueSearch())) {
+        if (StringUtils.hasText(dto.getValueSearch())) {
 
-            if("NAME".equals(dto.getConditionSearch())) {
-                whereClause += " AND e.fullName like '%" + dto.getValueSearch() +"%'";
-            } else if("EMAIL".equals(dto.getConditionSearch())) {
-                whereClause += " AND e.email like '%" + dto.getValueSearch() +"%'";
-            } else if("PHONE".equals(dto.getConditionSearch())) {
-                whereClause += " AND e.phone like '%" + dto.getValueSearch() +"%'";
-            } else if("CODE".equals(dto.getConditionSearch())) {
-                whereClause += " AND e.code like '%" + dto.getValueSearch() +"%'";
-            } else if("CLASS".equals(dto.getConditionSearch())) {
-                whereClause += " AND e.aClass.id like '%" + dto.getValueSearch() +"%'";
-            } else if("ID".equals(dto.getConditionSearch())) {
+            if ("NAME".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.fullName like '%" + dto.getValueSearch() + "%'";
+            } else if ("EMAIL".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.email like '%" + dto.getValueSearch() + "%'";
+            } else if ("PHONE".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.phone like '%" + dto.getValueSearch() + "%'";
+            } else if ("CODE".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.code like '%" + dto.getValueSearch() + "%'";
+            } else if ("CLASS".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.aClass.id like '%" + dto.getValueSearch() + "%'";
+            } else if ("ID".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.id = " + dto.getValueSearch();
             }
         }
@@ -118,5 +122,13 @@ public class StudentServiceImpl implements StudentService {
         Query q = entityManager.createQuery(sql, Student.class);
 
         return q.getResultList();
+    }
+
+    @Override
+    public StudentDto findByCode(String code) {
+        return studentRepository.findByCode(code)
+                .map(StudentDto::of).orElseThrow(() -> {
+                    throw new NotFoundException("not found student wiht code: %s".formatted(code));
+                });
     }
 }

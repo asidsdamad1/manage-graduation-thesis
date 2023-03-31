@@ -10,13 +10,13 @@ import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.StudentDto;
 import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.domain.entity.StudentClass;
+import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.service.FacultyService;
 import utc.edu.thesis.service.StudentClassService;
 import utc.edu.thesis.service.StudentService;
 import utc.edu.thesis.util.DateUtil;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,9 +70,12 @@ public class StudentController {
                         .address(dataOneArr.getString(7))
                         .build();
 
-                if (student != null) {
+                try {
                     res.add(studentService.addStudent(StudentDto.of(student)));
+                } catch (BadRequestException e) {
+                    res.add(studentService.editStudent(StudentDto.of(student)));
                 }
+
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

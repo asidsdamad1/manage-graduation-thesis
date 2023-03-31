@@ -16,4 +16,6 @@ public interface IUserService extends IService<User>, UserDetailsService {
     boolean isCorrectConfirmPassword(User user);
 
     boolean existsByUsername(String username);
+
+    User getCurrentUser();
 }

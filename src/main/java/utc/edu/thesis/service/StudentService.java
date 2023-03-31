@@ -15,4 +15,6 @@ public interface StudentService {
     StudentDto editStudent(StudentDto dto);
 
     List<StudentDto> getStudent(SearchDto dto);
+
+    StudentDto findByCode(String code);
 }
