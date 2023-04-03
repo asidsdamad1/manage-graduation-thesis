@@ -113,7 +113,7 @@ public class StudentServiceImpl implements StudentService {
             } else if ("CODE".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.code like '%" + dto.getValueSearch() + "%'";
             } else if ("CLASS".equals(dto.getConditionSearch())) {
-                whereClause += " AND e.aClass.id like '%" + dto.getValueSearch() + "%'";
+                whereClause += " AND e.studentClass.id like '%" + dto.getValueSearch() + "%'";
             } else if ("ID".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.id = " + dto.getValueSearch();
             }
