@@ -15,4 +15,5 @@ public interface SessionService {
     Boolean deleteSession(Long id);
 
     List<SessionDto> getSession(SearchDto dto);
+
 }

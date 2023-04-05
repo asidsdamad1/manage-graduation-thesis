@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -28,4 +29,7 @@ public class Session {
 
     @Column(name = "notes")
     private String notes;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Assignment> assignments;
 }
