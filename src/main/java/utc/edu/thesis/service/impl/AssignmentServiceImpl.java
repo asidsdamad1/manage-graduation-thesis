@@ -17,7 +17,8 @@ import utc.edu.thesis.service.TeacherService;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,29 +86,25 @@ public class AssignmentServiceImpl implements AssignmentService {
         Query q = entityManager.createQuery(sql, Assignment.class);
         List<Assignment> resultQuery = q.getResultList();
         List<AssignmentDto> res = new ArrayList<>();
-        resultQuery.forEach(assignment -> {
+        for (Assignment assignment : resultQuery) {
             AssignmentDto assignmentDto = AssignmentDto.of(assignment);
             assignmentDto.setAmount(
-                    assignmentRepository.countStudentBySession(
-                            assignment.getSession().getId(), assignment.getTeacher().getId()));
+                    assignmentRepository.countStudentByAssignment(
+                            assignment.getSession().getId(), assignment.getTeacher().getId()).size());
             res.add(assignmentDto);
-        });
+        }
 
         return res.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
-    public List<TeacherDto> getTeacher(List<AssignmentDto> assignments) {
-        List<TeacherDto> res = new ArrayList<>();
-        assignments.forEach(assignmentDto -> {
-            SearchDto searchDto = SearchDto.builder()
-                    .conditionSearch("ID")
-                    .valueSearch(String.valueOf(assignmentDto.getTeacher().getId()))
-                    .build();
-            res.addAll(teacherService.getTeacher(searchDto));
-        });
-
-        return res;
+    public List<AssignmentDto> getStudent(Long sessionId, Long teacherId) {
+        if(sessionId != null && teacherId != null) {
+            return assignmentRepository.countStudentByAssignment(sessionId, teacherId).stream()
+                    .map(AssignmentDto::of)
+                    .collect(Collectors.toList());
+        }
+        return null;
     }
 
     @Override

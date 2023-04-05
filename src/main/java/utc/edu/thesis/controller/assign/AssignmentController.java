@@ -2,10 +2,7 @@ package utc.edu.thesis.controller.assign;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import utc.edu.thesis.domain.dto.AssignmentDto;
 import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.SessionDto;
@@ -25,5 +22,10 @@ public class AssignmentController {
     public ResponseEntity<List<AssignmentDto>> getBySession(@RequestBody SearchDto dto) {
         List<AssignmentDto> assignments = assignmentService.getAssign(dto);
         return ResponseEntity.ok(assignments);
+    }
+
+    @PostMapping("/get-student/{sessionId}/{teacherId}")
+    public ResponseEntity<List<AssignmentDto>> getBySession(@PathVariable Long sessionId, @PathVariable Long teacherId) {
+        return ResponseEntity.ok(assignmentService.getStudent(sessionId, teacherId));
     }
 }

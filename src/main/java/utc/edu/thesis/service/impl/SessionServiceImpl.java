@@ -3,6 +3,7 @@ package utc.edu.thesis.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import utc.edu.thesis.domain.dto.AssignmentDto;
 import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.SessionDto;
 import utc.edu.thesis.domain.entity.Session;
@@ -27,7 +28,7 @@ public class SessionServiceImpl implements SessionService {
     public SessionDto addSession(SessionDto request) {
         Session session = Session.builder()
                 .year(request.getYear())
-                .notes(request.getNotes())
+                .createdBy("admin")
                 .build();
 
         return SessionDto.of(sessionRepository.save(session));
@@ -43,7 +44,6 @@ public class SessionServiceImpl implements SessionService {
             Session session = Session.builder()
                     .id(response.getId())
                     .year(request.getYear())
-                    .notes(request.getNotes())
                     .build();
 
             return SessionDto.of(sessionRepository.save(session));
@@ -57,7 +57,8 @@ public class SessionServiceImpl implements SessionService {
             Session res = sessionRepository.findById(id).orElseThrow(() -> {
                 throw new NotFoundException("not found id: %d".formatted(id));
             });
-            if (res != null) {
+
+            if (res != null && assignmentService.countAssignmentBySession(res.getId()) == 0) {
                 sessionRepository.delete(res);
                 return true;
             }
