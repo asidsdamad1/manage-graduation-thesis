@@ -2,9 +2,6 @@ package utc.edu.thesis.domain.dto;
 
 import lombok.Data;
 import utc.edu.thesis.domain.entity.Assignment;
-import utc.edu.thesis.domain.entity.Session;
-import utc.edu.thesis.domain.entity.Student;
-import utc.edu.thesis.domain.entity.Teacher;
 import utc.edu.thesis.util.ObjectMapperUtil;
 
 import java.time.LocalDateTime;

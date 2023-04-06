@@ -10,8 +10,8 @@ import java.util.List;
 
 @Service
 public interface AssignmentService {
-    Assignment addAssign(Assignment request);
-    Boolean deleteAssign(Long id);
+    AssignmentDto addAssign(AssignmentDto request);
+    Boolean deleteAssign(AssignmentDto assignmentDto);
     List<AssignmentDto> getAssign(SearchDto dto);
     Integer countAssignmentBySession(Long sessionId);
     List<AssignmentDto> getStudent(Long sessionId, Long teacherId);
