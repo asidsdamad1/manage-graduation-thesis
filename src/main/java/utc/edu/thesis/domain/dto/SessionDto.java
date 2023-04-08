@@ -11,6 +11,7 @@ public class SessionDto {
     private String notes;
     private String createdBy;
     private Integer amount;
+    private Boolean status;
 
     public static SessionDto of(Session entity) {
         return ObjectMapperUtil.OBJECT_MAPPER.convertValue(entity, SessionDto.class);

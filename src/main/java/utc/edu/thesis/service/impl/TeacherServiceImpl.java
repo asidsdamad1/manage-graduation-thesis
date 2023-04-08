@@ -1,7 +1,5 @@
 package utc.edu.thesis.service.impl;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -13,6 +11,9 @@ import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.TeacherRepository;
 import utc.edu.thesis.service.TeacherService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -88,26 +89,29 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<TeacherDto> getTeacher(SearchDto dto) {
-        if(dto == null) {
+        if (dto == null) {
             throw new NotFoundException("not found");
         }
 
         String whereClause = "";
         String orderBy = " ";
         String sql = "select e from Teacher as e where(1=1) ";
-        if(StringUtils.hasText(dto.getValueSearch())) {
+        if (StringUtils.hasText(dto.getValueSearch())) {
 
-            if("NAME".equals(dto.getConditionSearch())) {
-                whereClause += "AND e.fullName like '%" + dto.getValueSearch() +"%'";
-            } else if("EMAIL".equals(dto.getConditionSearch())) {
-                whereClause += "AND e.email like '%" + dto.getValueSearch() +"%'";
-            } else if("PHONE".equals(dto.getConditionSearch())) {
-                whereClause += "AND e.phone like '%" + dto.getValueSearch() +"%'";
+            if ("NAME".equals(dto.getConditionSearch())) {
+                whereClause += "AND e.fullName like '%" + dto.getValueSearch() + "%'";
+            } else if ("EMAIL".equals(dto.getConditionSearch())) {
+                whereClause += "AND e.email like '%" + dto.getValueSearch() + "%'";
+            } else if ("PHONE".equals(dto.getConditionSearch())) {
+                whereClause += "AND e.phone like '%" + dto.getValueSearch() + "%'";
             }
         }
         sql += whereClause + orderBy;
         Query q = manager.createQuery(sql, Teacher.class);
+        List<Teacher> resQuery = q.getResultList();
+        List<TeacherDto> res = new ArrayList<>();
 
-        return q.getResultList();
+        resQuery.forEach(teacher -> res.add(TeacherDto.of(teacher)));
+        return res;
     }
 }

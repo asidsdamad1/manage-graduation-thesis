@@ -32,8 +32,15 @@ public class Student {
     private String phone;
     @Column(name = "email")
     private String email;
+    @Column(name = "password")
+    private String password;
 
     @ManyToOne
     @JoinColumn(name = "class_id")
     private StudentClass studentClass;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
 }

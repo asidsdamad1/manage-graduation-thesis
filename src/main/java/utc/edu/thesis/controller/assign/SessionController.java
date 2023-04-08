@@ -34,4 +34,9 @@ public class SessionController {
     public ResponseEntity<List<SessionDto>> getSession(@RequestBody SearchDto payload) {
         return ResponseEntity.ok(sessionService.getSession(payload));
     }
+
+    @PostMapping("/change-status")
+    public ResponseEntity<Boolean> getSession(@RequestBody SessionDto sessionDto) {
+        return ResponseEntity.ok(sessionService.changeStatus(sessionDto));
+    }
 }

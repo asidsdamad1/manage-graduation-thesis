@@ -3,8 +3,10 @@ package utc.edu.thesis.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import utc.edu.thesis.domain.dto.AssignmentDto;
 import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.StudentDto;
+import utc.edu.thesis.domain.entity.Assignment;
 import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
@@ -14,7 +16,9 @@ import utc.edu.thesis.service.StudentService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -111,7 +115,7 @@ public class StudentServiceImpl implements StudentService {
             } else if ("PHONE".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.phone like '%" + dto.getValueSearch() + "%'";
             } else if ("CODE".equals(dto.getConditionSearch())) {
-                whereClause += " AND e.code like '%" + dto.getValueSearch() + "%'";
+                whereClause += " AND e.code = '" + dto.getValueSearch() + "'";
             } else if ("CLASS".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.studentClass.id like '%" + dto.getValueSearch() + "%'";
             } else if ("ID".equals(dto.getConditionSearch())) {
@@ -120,8 +124,9 @@ public class StudentServiceImpl implements StudentService {
         }
         sql += whereClause + orderBy;
         Query q = entityManager.createQuery(sql, Student.class);
+        List<Student> resultQuery = q.getResultList();
 
-        return q.getResultList();
+        return resultQuery.stream().map(StudentDto::of).collect(Collectors.toList());
     }
 
     @Override

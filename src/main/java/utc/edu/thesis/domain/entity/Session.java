@@ -27,6 +27,9 @@ public class Session {
     @Column(name = "created_by")
     private String createdBy;
 
+    @Column(name = "status")
+    private Boolean status;
+
     @OneToMany(cascade = CascadeType.ALL)
     private List<Assignment> assignments;
 }

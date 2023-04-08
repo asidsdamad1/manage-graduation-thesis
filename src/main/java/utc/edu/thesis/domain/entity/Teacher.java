@@ -30,6 +30,11 @@ public class Teacher {
     private String phone;
     @Column(name = "email")
     private String email;
+    @Column(name = "password")
+    private String password;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
 }

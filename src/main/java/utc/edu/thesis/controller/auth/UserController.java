@@ -1,6 +1,7 @@
 package utc.edu.thesis.controller.auth;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
@@ -30,26 +31,14 @@ import java.util.Set;
 @RestController
 @PropertySource("classpath:application.properties")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class UserController {
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private OldPasswordService oldPasswordService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final UserService userService;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
+    private final OldPasswordService oldPasswordService;
 
     @GetMapping("/users")
     public ResponseEntity<Iterable<User>> showAllUser(){

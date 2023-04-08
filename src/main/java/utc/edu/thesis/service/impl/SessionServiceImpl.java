@@ -92,4 +92,20 @@ public class SessionServiceImpl implements SessionService {
 
         return resultList;
     }
+
+    @Override
+    public Boolean changeStatus(SessionDto payload) {
+        if (payload != null) {
+            Session session = sessionRepository.findById(payload.getId()).orElseThrow();
+
+            session.setStatus(payload.getStatus());
+            sessionRepository.save(session);
+            AssignmentDto assignmentDto = new AssignmentDto();
+            assignmentDto.setSession(SessionDto.of(session) );
+            assignmentDto.setStatus(payload.getStatus());
+            assignmentService.changeStatus(assignmentDto);
+            return true;
+        }
+        return false;
+    }
 }

@@ -2,9 +2,6 @@ package utc.edu.thesis.domain.dto;
 
 import lombok.Data;
 import utc.edu.thesis.domain.entity.Assignment;
-import utc.edu.thesis.domain.entity.Session;
-import utc.edu.thesis.domain.entity.Student;
-import utc.edu.thesis.domain.entity.Teacher;
 import utc.edu.thesis.util.ObjectMapperUtil;
 
 import java.time.LocalDateTime;
@@ -19,6 +16,7 @@ public class AssignmentDto {
     private StudentDto student;
     private TeacherDto teacher;
     private Integer amount;
+    private Boolean status;
 
     public static AssignmentDto of(Assignment entity) {
         return ObjectMapperUtil.OBJECT_MAPPER.convertValue(entity, AssignmentDto.class);

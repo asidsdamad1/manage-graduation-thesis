@@ -3,10 +3,9 @@ package utc.edu.thesis.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import utc.edu.thesis.domain.dto.AssignmentDto;
-import utc.edu.thesis.domain.dto.SearchDto;
-import utc.edu.thesis.domain.dto.TeacherDto;
+import utc.edu.thesis.domain.dto.*;
 import utc.edu.thesis.domain.entity.Assignment;
+import utc.edu.thesis.domain.entity.Session;
 import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.AssignmentRepository;
@@ -16,6 +15,7 @@ import utc.edu.thesis.service.TeacherService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,32 +31,50 @@ public class AssignmentServiceImpl implements AssignmentService {
     private final EntityManager entityManager;
 
     @Override
-    public Assignment addAssign(Assignment request) {
+    public AssignmentDto addAssign(AssignmentDto request) {
         if (request != null) {
-            if (studentService.findByCode(request.getStudent().getCode()) != null) {
+            if(request.getStudent().getId() == 0) {
+                StudentDto studentDto = studentService.getStudent(
+                        new SearchDto(request.getStudent().getCode(), "CODE"))
+                        .stream().findFirst().orElseThrow(() -> {
+                            throw new NotFoundException("Can't find student with code: %s".formatted(request.getStudent().getCode()));
+                        });
+                request.setStudent(studentDto);
+            }
+
+            if (!assignmentRepository.getStudentBySession(request.getSession().getId(), request.getStudent().getId()).isEmpty()) {
                 throw new BadRequestException("Student with code: %s existed".formatted(request.getStudent().getCode()));
             }
 
             Assignment assignment = Assignment.builder()
                     .createdDate(LocalDateTime.now())
                     .createdBy(userService.getCurrentUser().getUsername())
-                    .teacher(request.getTeacher())
-                    .student(request.getStudent())
+                    .session(SessionDto.toEntity(request.getSession()))
+                    .teacher(TeacherDto.toEntity(request.getTeacher()))
+                    .student(StudentDto.toEntity(request.getStudent()))
                     .build();
 
             assignmentRepository.save(assignment);
+
+            return AssignmentDto.of(assignment);
         }
         return null;
     }
 
+    @Transactional
     @Override
-    public Boolean deleteAssign(Long id) {
-        if (id != null) {
-            Assignment res = assignmentRepository.findById(id).orElseThrow(() -> {
-                throw new NotFoundException("not found id: %d".formatted(id));
-            });
-            if (res != null) {
-                assignmentRepository.delete(res);
+    public Boolean deleteAssign(AssignmentDto assignmentDto) {
+        if (assignmentDto != null) {
+            if(assignmentDto.getStudent() != null) {
+                List<Assignment> assignments = assignmentRepository.countStudentByAssignment(assignmentDto.getSession().getId(), assignmentDto.getTeacher().getId());
+                if(assignments.size() == 1) {
+                    return false;
+                }
+                assignmentRepository.deleteByStudent(assignmentDto.getSession().getId(), assignmentDto.getStudent().getId());
+                return true;
+            }
+            if (assignmentDto.getTeacher() != null && assignmentDto.getStudent() == null) {
+                assignmentRepository.deleteBySession(assignmentDto.getSession().getId(), assignmentDto.getTeacher().getId());
                 return true;
             }
         }
@@ -111,5 +129,28 @@ public class AssignmentServiceImpl implements AssignmentService {
     public Integer countAssignmentBySession(Long sessionId) {
 
         return assignmentRepository.countAssignmentBySession(sessionId);
+    }
+
+    @Override
+    public Boolean changeStatus(AssignmentDto payload) {
+        if (payload != null) {
+            if(payload.getSession() == null) {
+                Assignment assignment = assignmentRepository.findById(payload.getId()).orElseThrow();
+                assignment.setStatus(payload.getStatus());
+
+                assignmentRepository.save(assignment);
+                return true;
+            }
+            List<Assignment> assignments = assignmentRepository.getAssignmentBySession(payload.getSession().getId());
+
+            if (!assignments.isEmpty()) {
+                assignments.forEach(assignment -> {
+                    assignment.setStatus(payload.getStatus());
+                    assignmentRepository.save(assignment);
+                });
+                return true;
+            }
+        }
+        return false;
     }
 }

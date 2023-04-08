@@ -37,4 +37,6 @@ public class Assignment {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
+    @Column(name = "status")
+    private Boolean status;
 }
