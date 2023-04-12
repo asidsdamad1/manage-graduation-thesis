@@ -11,12 +11,12 @@ import utc.edu.thesis.service.StudentClassService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/class")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 public class StudentClassController {
     private final StudentClassService service;
 
-    @GetMapping("/get-all")
+    @GetMapping("/get-all-class")
     public ResponseEntity<List<StudentClass>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }

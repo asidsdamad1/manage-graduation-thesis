@@ -101,7 +101,7 @@ public class TeacherServiceImpl implements TeacherService {
             if ("NAME".equals(dto.getConditionSearch())) {
                 whereClause += "AND e.fullName like '%" + dto.getValueSearch() + "%'";
             } else if ("EMAIL".equals(dto.getConditionSearch())) {
-                whereClause += "AND e.email like '%" + dto.getValueSearch() + "%'";
+                whereClause += "AND e.email = '" + dto.getValueSearch() + "'";
             } else if ("PHONE".equals(dto.getConditionSearch())) {
                 whereClause += "AND e.phone like '%" + dto.getValueSearch() + "%'";
             }

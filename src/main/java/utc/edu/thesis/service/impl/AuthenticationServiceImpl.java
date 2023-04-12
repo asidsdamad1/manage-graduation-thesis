@@ -1,11 +1,7 @@
 package utc.edu.thesis.service.impl;
 
-import utc.edu.thesis.security.jwt.JWTUtils;
-import utc.edu.thesis.security.response.AuthenticationResponse;
-import utc.edu.thesis.domain.dto.UserRequest;
-import utc.edu.thesis.exception.request.UnauthenticatedException;
-import utc.edu.thesis.service.AuthenticationService;
 import io.jsonwebtoken.impl.DefaultClaims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,9 +9,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import utc.edu.thesis.domain.dto.SearchDto;
+import utc.edu.thesis.domain.dto.TeacherDto;
+import utc.edu.thesis.domain.dto.UserRequest;
+import utc.edu.thesis.exception.request.UnauthenticatedException;
+import utc.edu.thesis.security.jwt.JWTUtils;
+import utc.edu.thesis.security.response.AuthenticationResponse;
+import utc.edu.thesis.service.AuthenticationService;
+import utc.edu.thesis.service.TeacherService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -25,6 +29,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JWTUtils jwtUtils;
+    private final TeacherService teacherService;
 
     @Override
     public AuthenticationResponse createAuthenticationToken(UserRequest userRequest) {
@@ -39,11 +44,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         final String jwt = jwtUtils.generateToken(userDetails);
+        int expired = jwtUtils.getJwtExpirationInMs();
         final String jwtRefresh = jwtUtils.generateRefreshToken(userDetails);
+
+        long id = 0;
+        SearchDto searchDto = new SearchDto(userRequest.getUsername(), "EMAIL");
+        List<TeacherDto> teachers = teacherService.getTeacher(searchDto);
+        if (!teachers.isEmpty()) {
+            id = teachers.get(0).getId();
+        }
 
         new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword(), userDetails.getAuthorities());
 
-        return new AuthenticationResponse(jwt, jwtRefresh, userDetails.getUsername(), userDetails.getAuthorities());
+
+        return new AuthenticationResponse(jwt, jwtRefresh, userDetails.getUsername(), userDetails.getAuthorities(), expired, id);
     }
 
     @Override

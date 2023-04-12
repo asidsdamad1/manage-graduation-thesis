@@ -4,6 +4,7 @@ import lombok.Data;
 import utc.edu.thesis.domain.entity.Assignment;
 import utc.edu.thesis.util.ObjectMapperUtil;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 public class StudentController {
     private final StudentService studentService;

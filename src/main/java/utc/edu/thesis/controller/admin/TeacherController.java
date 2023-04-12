@@ -11,7 +11,7 @@ import utc.edu.thesis.service.TeacherService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/teacher")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 public class TeacherController {
     private final TeacherService teacherService;

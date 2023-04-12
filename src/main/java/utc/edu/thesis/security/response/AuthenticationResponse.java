@@ -17,6 +17,8 @@ public class AuthenticationResponse {
     private String refreshToken;
     private String username;
     private Collection<? extends GrantedAuthority> authorities;
+    private int expired;
+    private long id;
 
     public AuthenticationResponse(String accessToken) {
         this.accessToken = accessToken;

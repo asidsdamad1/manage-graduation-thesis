@@ -1,12 +1,12 @@
 package utc.edu.thesis.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import utc.edu.thesis.domain.dto.AssignmentDto;
 import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.StudentDto;
-import utc.edu.thesis.domain.entity.Assignment;
 import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
@@ -14,9 +14,6 @@ import utc.edu.thesis.repository.StudentRepository;
 import utc.edu.thesis.service.StudentClassService;
 import utc.edu.thesis.service.StudentService;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,15 +107,20 @@ public class StudentServiceImpl implements StudentService {
 
             if ("NAME".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.fullName like '%" + dto.getValueSearch() + "%'";
-            } else if ("EMAIL".equals(dto.getConditionSearch())) {
+            }
+            if ("EMAIL".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.email like '%" + dto.getValueSearch() + "%'";
-            } else if ("PHONE".equals(dto.getConditionSearch())) {
+            }
+            if ("PHONE".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.phone like '%" + dto.getValueSearch() + "%'";
-            } else if ("CODE".equals(dto.getConditionSearch())) {
+            }
+            if ("CODE".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.code = '" + dto.getValueSearch() + "'";
-            } else if ("CLASS".equals(dto.getConditionSearch())) {
+            }
+            if ("CLASS".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.studentClass.id like '%" + dto.getValueSearch() + "%'";
-            } else if ("ID".equals(dto.getConditionSearch())) {
+            }
+            if ("ID".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.id = " + dto.getValueSearch();
             }
         }
