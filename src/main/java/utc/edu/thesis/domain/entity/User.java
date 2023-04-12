@@ -1,21 +1,25 @@
 package utc.edu.thesis.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "userTable")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -44,8 +48,29 @@ public class User implements Serializable {
     private boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new HashSet<>(this.roles);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
 }

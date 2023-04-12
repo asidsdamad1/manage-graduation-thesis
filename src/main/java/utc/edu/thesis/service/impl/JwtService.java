@@ -22,7 +22,7 @@ public class JwtService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtService.class.getName());
 
-    public String generateTokenLogin(Authentication authentication){
+    public String generateTokenLogin(Authentication authentication) {
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
 
         return Jwts.builder()

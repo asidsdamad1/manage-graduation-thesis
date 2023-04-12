@@ -1,84 +1,53 @@
 package utc.edu.thesis.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import utc.edu.thesis.security.filter.CustomAuthorizationFilter;
+import utc.edu.thesis.security.response.JwtAuthenticationEntryPoint;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import utc.edu.thesis.security.jwt.CustomAccessDeniedHandler;
-import utc.edu.thesis.security.jwt.JwtAuthenticationFilter;
-import utc.edu.thesis.security.jwt.RestAuthenticationEntryPoint;
-import utc.edu.thesis.service.IUserService;
-import utc.edu.thesis.service.impl.UserService;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@RequiredArgsConstructor
+public class SecurityConfig {
+    private final CustomAuthorizationFilter authorizationFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
-    public IUserService iUserService() {
-        return new UserService();
-    }
-    @Autowired
-    private IUserService iUserService;
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
-    }
-
-    @Bean(BeanIds.AUTHENTICATION_MANAGER)
-    @Override
-    public AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public RestAuthenticationEntryPoint restServicesEntryPoint() {
-
-        return new RestAuthenticationEntryPoint();
-    }
-
-    @Bean
-    public CustomAccessDeniedHandler customAccessDeniedHandler() {
-
-        return new CustomAccessDeniedHandler();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(iUserService).passwordEncoder(passwordEncoder());
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().ignoringAntMatchers("/**");
-        http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());
-        http.authorizeRequests()
-                .antMatchers( "/auth/login","/auth/register", "/categories/**", "/wallets/**" , "/transactions/**","/users/**",  "/oauth/**", "/teacher/**").permitAll()
-                .antMatchers().access("hasRole('ROLE_USER')")
-                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers("/api/signin", "/api/token/refresh").permitAll()
+                .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/admin/users").hasAnyAuthority("ROLE_ADMIN")
+                .requestMatchers("/**").authenticated()
                 .anyRequest().authenticated()
-                .and().csrf().disable()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
-        http.sessionManagement()
+                .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.cors();
+        http.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
+
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
 }

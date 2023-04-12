@@ -9,8 +9,8 @@ import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.StudentClassRepository;
 import utc.edu.thesis.service.StudentClassService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Service

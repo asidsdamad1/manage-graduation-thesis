@@ -1,4 +1,4 @@
-package utc.edu.thesis.controller.teacher;
+package utc.edu.thesis.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

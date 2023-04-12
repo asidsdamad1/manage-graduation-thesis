@@ -1,4 +1,4 @@
-package utc.edu.thesis.controller.assign;
+package utc.edu.thesis.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;

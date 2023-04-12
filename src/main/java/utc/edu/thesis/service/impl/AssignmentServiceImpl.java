@@ -1,21 +1,21 @@
 package utc.edu.thesis.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import utc.edu.thesis.domain.dto.*;
 import utc.edu.thesis.domain.entity.Assignment;
-import utc.edu.thesis.domain.entity.Session;
 import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.AssignmentRepository;
 import utc.edu.thesis.service.AssignmentService;
 import utc.edu.thesis.service.StudentService;
 import utc.edu.thesis.service.TeacherService;
+import utc.edu.thesis.service.UserService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +33,16 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public AssignmentDto addAssign(AssignmentDto request) {
         if (request != null) {
-            if(request.getStudent().getId() == 0) {
+            if (request.getStudent().getId() == 0) {
                 StudentDto studentDto = studentService.getStudent(
-                        new SearchDto(request.getStudent().getCode(), "CODE"))
+                                new SearchDto(request.getStudent().getCode(), "CODE"))
                         .stream().findFirst().orElseThrow(() -> {
                             throw new NotFoundException("Can't find student with code: %s".formatted(request.getStudent().getCode()));
                         });
                 request.setStudent(studentDto);
             }
 
-            if (!assignmentRepository.getStudentBySession(request.getSession().getId(), request.getStudent().getId()).isEmpty()) {
+            if (!assignmentRepository.getStudentBySession(request.getSession().getId(), request.getStudent().getCode()).isEmpty()) {
                 throw new BadRequestException("Student with code: %s existed".formatted(request.getStudent().getCode()));
             }
 
@@ -65,9 +65,9 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public Boolean deleteAssign(AssignmentDto assignmentDto) {
         if (assignmentDto != null) {
-            if(assignmentDto.getStudent() != null) {
+            if (assignmentDto.getStudent() != null) {
                 List<Assignment> assignments = assignmentRepository.countStudentByAssignment(assignmentDto.getSession().getId(), assignmentDto.getTeacher().getId());
-                if(assignments.size() == 1) {
+                if (assignments.size() == 1) {
                     return false;
                 }
                 assignmentRepository.deleteByStudent(assignmentDto.getSession().getId(), assignmentDto.getStudent().getId());
@@ -100,7 +100,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                 whereClause += " AND e.id = " + dto.getValueSearch();
             }
         }
-        sql += whereClause+ orderBy;
+        sql += whereClause + orderBy;
         Query q = entityManager.createQuery(sql, Assignment.class);
         List<Assignment> resultQuery = q.getResultList();
         List<AssignmentDto> res = new ArrayList<>();
@@ -117,7 +117,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public List<AssignmentDto> getStudent(Long sessionId, Long teacherId) {
-        if(sessionId != null && teacherId != null) {
+        if (sessionId != null && teacherId != null) {
             return assignmentRepository.countStudentByAssignment(sessionId, teacherId).stream()
                     .map(AssignmentDto::of)
                     .collect(Collectors.toList());
@@ -134,7 +134,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public Boolean changeStatus(AssignmentDto payload) {
         if (payload != null) {
-            if(payload.getSession() == null) {
+            if (payload.getSession() == null) {
                 Assignment assignment = assignmentRepository.findById(payload.getId()).orElseThrow();
                 assignment.setStatus(payload.getStatus());
 

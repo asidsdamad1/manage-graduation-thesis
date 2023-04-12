@@ -12,8 +12,8 @@ import utc.edu.thesis.repository.SessionRepository;
 import utc.edu.thesis.service.AssignmentService;
 import utc.edu.thesis.service.SessionService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
