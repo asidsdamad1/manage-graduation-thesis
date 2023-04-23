@@ -18,6 +18,10 @@ public class Project {
     private LocalDateTime createDate;
     @Column(name = "end_date")
     private LocalDateTime endDate;
+    @Column(name = "outline_file")
+    private String outlineFile;
+    @Column(name = "report_file")
+    private String reportFile;
 
     @OneToOne
     @JoinColumn(name = "student_id")

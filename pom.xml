@@ -137,6 +137,12 @@
             <artifactId>tomcat-embed-core</artifactId>
             <version>10.1.7</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.12.454</version>
+        </dependency>
 
     </dependencies>
 
