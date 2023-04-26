@@ -9,4 +9,5 @@ import java.util.List;
 @Service
 public interface ManagerProjectService {
     List<ProjectDto> getProjects(SearchDto searchDto);
+    ProjectDto addProject(ProjectDto projectDto);
 }

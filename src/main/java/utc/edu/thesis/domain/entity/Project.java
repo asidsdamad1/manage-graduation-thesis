@@ -1,11 +1,18 @@
 package utc.edu.thesis.domain.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "project")
 public class Project {
@@ -27,7 +34,11 @@ public class Project {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @ManyToOne
+    @OneToOne
+    @JoinColumn(name = "session_id")
+    private Session session;
+
+    @OneToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 

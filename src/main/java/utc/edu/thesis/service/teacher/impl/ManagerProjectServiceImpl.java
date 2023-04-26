@@ -44,4 +44,9 @@ public class ManagerProjectServiceImpl implements ManagerProjectService {
         resQuery.forEach(project -> res.add(ProjectDto.of(project)));
         return res;
     }
+
+    @Override
+    public ProjectDto addProject(ProjectDto projectDto) {
+        return null;
+    }
 }

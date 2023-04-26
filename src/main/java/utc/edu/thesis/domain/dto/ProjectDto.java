@@ -1,6 +1,9 @@
 package utc.edu.thesis.domain.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import utc.edu.thesis.domain.entity.Project;
 import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.domain.entity.Teacher;
@@ -10,16 +13,20 @@ import utc.edu.thesis.util.ObjectMapperUtil;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProjectDto {
     private Long id;
     private String name;
     private LocalDateTime createDate;
     private LocalDateTime endDate;
-    private Student student;
-    private Teacher teacher;
-    private Topic topic;
+    private StudentDto student;
+    private TeacherDto teacher;
+    private TopicDto topic;
     private String reportFile;
     private String outlineFile;
+    private SessionDto session;
 
     public static ProjectDto of(Project entity) {
         return ObjectMapperUtil.OBJECT_MAPPER.convertValue(entity, ProjectDto.class);
