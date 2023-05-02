@@ -10,12 +10,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import utc.edu.thesis.domain.dto.SearchDto;
+import utc.edu.thesis.domain.dto.StudentDto;
 import utc.edu.thesis.domain.dto.TeacherDto;
 import utc.edu.thesis.domain.dto.UserRequest;
 import utc.edu.thesis.exception.request.UnauthenticatedException;
 import utc.edu.thesis.security.jwt.JWTUtils;
 import utc.edu.thesis.security.response.AuthenticationResponse;
 import utc.edu.thesis.service.AuthenticationService;
+import utc.edu.thesis.service.SessionService;
+import utc.edu.thesis.service.StudentService;
 import utc.edu.thesis.service.TeacherService;
 
 import java.util.HashMap;
@@ -30,6 +33,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JWTUtils jwtUtils;
     private final TeacherService teacherService;
+    private final StudentService studentService;
+    private final SessionService sessionService;
 
     @Override
     public AuthenticationResponse createAuthenticationToken(UserRequest userRequest) {
@@ -50,14 +55,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         long id = 0;
         SearchDto searchDto = new SearchDto(userRequest.getUsername(), "EMAIL");
         List<TeacherDto> teachers = teacherService.getTeacher(searchDto);
+        List<StudentDto> student = studentService.getStudent(searchDto);
         if (!teachers.isEmpty()) {
             id = teachers.get(0).getId();
         }
+        if(!student.isEmpty()) {
+            id = student.get(0).getId();
+        }
+        long sessionId = sessionService.getSessionActive().getId();
 
         new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword(), userDetails.getAuthorities());
 
 
-        return new AuthenticationResponse(jwt, jwtRefresh, userDetails.getUsername(), userDetails.getAuthorities(), expired, id);
+        return new AuthenticationResponse(jwt, jwtRefresh, userDetails.getUsername(), userDetails.getAuthorities(), expired, id, sessionId);
     }
 
     @Override

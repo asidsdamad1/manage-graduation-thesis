@@ -8,6 +8,7 @@ import utc.edu.thesis.domain.entity.Project;
 import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.domain.entity.Teacher;
 import utc.edu.thesis.domain.entity.Topic;
+import utc.edu.thesis.domain.enumaration.StatusEnum;
 import utc.edu.thesis.util.ObjectMapperUtil;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public class ProjectDto {
     private String reportFile;
     private String outlineFile;
     private SessionDto session;
+    private StatusEnum status;
 
     public static ProjectDto of(Project entity) {
         return ObjectMapperUtil.OBJECT_MAPPER.convertValue(entity, ProjectDto.class);

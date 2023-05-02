@@ -79,6 +79,9 @@ public class SessionServiceImpl implements SessionService {
             if ("YEAR".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.year = " + dto.getValueSearch();
             }
+            if("STATUS".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.status = true";
+            }
         }
         sql += whereClause + orderBy;
         Query q = entityManager.createQuery(sql, Session.class);
@@ -107,5 +110,10 @@ public class SessionServiceImpl implements SessionService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public SessionDto getSessionActive() {
+        return SessionDto.of(sessionRepository.getSessionActive());
     }
 }

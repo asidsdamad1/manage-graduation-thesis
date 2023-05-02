@@ -9,10 +9,7 @@ import utc.edu.thesis.domain.entity.Assignment;
 import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.AssignmentRepository;
-import utc.edu.thesis.service.AssignmentService;
-import utc.edu.thesis.service.StudentService;
-import utc.edu.thesis.service.TeacherService;
-import utc.edu.thesis.service.UserService;
+import utc.edu.thesis.service.*;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -98,6 +95,9 @@ public class AssignmentServiceImpl implements AssignmentService {
                 whereClause += " AND e.session.id = " + dto.getValueSearch();
             } else if ("ID".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.id = " + dto.getValueSearch();
+            } else if ("TEACHER".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.student.id = " + dto.getValueSearch().split(",")[0]
+                        + " AND e.session.id = " + dto.getValueSearch().split(",")[1];
             }
         }
         sql += whereClause + orderBy;

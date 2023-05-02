@@ -17,4 +17,6 @@ public interface SessionService {
     List<SessionDto> getSession(SearchDto dto);
 
     Boolean changeStatus(SessionDto payload);
+
+    SessionDto getSessionActive();
 }

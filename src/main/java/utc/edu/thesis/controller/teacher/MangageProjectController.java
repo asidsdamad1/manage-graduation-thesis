@@ -13,7 +13,7 @@ import utc.edu.thesis.service.teacher.ManagerProjectService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/teacher")
+@RequestMapping("/project")
 @RequiredArgsConstructor
 public class MangageProjectController {
     private final ManagerProjectService projectService;

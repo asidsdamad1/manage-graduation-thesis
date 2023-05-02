@@ -19,6 +19,7 @@ public class AuthenticationResponse {
     private Collection<? extends GrantedAuthority> authorities;
     private int expired;
     private long id;
+    private long sessionId;
 
     public AuthenticationResponse(String accessToken) {
         this.accessToken = accessToken;

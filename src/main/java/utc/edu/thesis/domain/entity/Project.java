@@ -29,6 +29,8 @@ public class Project {
     private String outlineFile;
     @Column(name = "report_file")
     private String reportFile;
+    @Column(name = "status")
+    private Integer status;
 
     @OneToOne
     @JoinColumn(name = "student_id")

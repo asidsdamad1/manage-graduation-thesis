@@ -11,6 +11,7 @@ import utc.edu.thesis.service.teacher.ManagerStudentService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class ManagerStudentServiceImpl implements ManagerStudentService {
             List<Assignment> assignments = assignmentRepository.getStudentByTeacher(searchDto.getId());
             assignments.forEach(assignment -> {
                 studentService.getStudent(searchDto).forEach(studentDto -> {
-                    if (studentDto.getId() == assignment.getStudent().getId()) {
+                    if (Objects.equals(studentDto.getId(), assignment.getStudent().getId())) {
                         res.add(studentDto);
                     }
                 });

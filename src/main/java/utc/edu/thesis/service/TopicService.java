@@ -1,9 +1,14 @@
 package utc.edu.thesis.service;
 
 import org.springframework.stereotype.Service;
+import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.dto.TopicDto;
+import utc.edu.thesis.domain.entity.StudentClass;
+
+import java.util.List;
 
 @Service
 public interface TopicService {
-    TopicDto getById(Long id);
+
+    List<TopicDto> getTopic(SearchDto dto);
 }
