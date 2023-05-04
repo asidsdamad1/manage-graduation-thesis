@@ -16,10 +16,7 @@ import utc.edu.thesis.domain.dto.UserRequest;
 import utc.edu.thesis.exception.request.UnauthenticatedException;
 import utc.edu.thesis.security.jwt.JWTUtils;
 import utc.edu.thesis.security.response.AuthenticationResponse;
-import utc.edu.thesis.service.AuthenticationService;
-import utc.edu.thesis.service.SessionService;
-import utc.edu.thesis.service.StudentService;
-import utc.edu.thesis.service.TeacherService;
+import utc.edu.thesis.service.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TeacherService teacherService;
     private final StudentService studentService;
     private final SessionService sessionService;
+    private final AssignmentService assignmentService;
 
     @Override
     public AuthenticationResponse createAuthenticationToken(UserRequest userRequest) {
@@ -52,22 +50,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         int expired = jwtUtils.getJwtExpirationInMs();
         final String jwtRefresh = jwtUtils.generateRefreshToken(userDetails);
 
-        long id = 0;
+        long studentId = 0;
+        long teacherId = 0;
+        long sessionId = sessionService.getSessionActive().getId();
         SearchDto searchDto = new SearchDto(userRequest.getUsername(), "EMAIL");
         List<TeacherDto> teachers = teacherService.getTeacher(searchDto);
         List<StudentDto> student = studentService.getStudent(searchDto);
         if (!teachers.isEmpty()) {
-            id = teachers.get(0).getId();
+            teacherId = teachers.get(0).getId();
         }
         if(!student.isEmpty()) {
-            id = student.get(0).getId();
+            studentId = student.get(0).getId();
+            teacherId = assignmentService
+                    .getAssign(new SearchDto("%d,%d".formatted(studentId, sessionId), "TEACHER"))
+                    .get(0)
+                    .getTeacher().getId();
         }
-        long sessionId = sessionService.getSessionActive().getId();
 
         new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword(), userDetails.getAuthorities());
 
 
-        return new AuthenticationResponse(jwt, jwtRefresh, userDetails.getUsername(), userDetails.getAuthorities(), expired, id, sessionId);
+        return new AuthenticationResponse(jwt, jwtRefresh, userDetails.getUsername(), userDetails.getAuthorities(), expired, studentId, teacherId, sessionId);
     }
 
     @Override

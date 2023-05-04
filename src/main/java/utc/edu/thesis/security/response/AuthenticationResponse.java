@@ -18,7 +18,8 @@ public class AuthenticationResponse {
     private String username;
     private Collection<? extends GrantedAuthority> authorities;
     private int expired;
-    private long id;
+    private long studentId;
+    private long teacherId;
     private long sessionId;
 
     public AuthenticationResponse(String accessToken) {

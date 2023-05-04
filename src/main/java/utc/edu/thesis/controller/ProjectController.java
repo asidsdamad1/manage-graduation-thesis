@@ -5,18 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import utc.edu.thesis.domain.dto.ProjectDto;
-import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.service.ProjectService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/project")
 @RequiredArgsConstructor
 public class ProjectController {
     private final ProjectService projectService;
-
-
 
     @PostMapping("/add-project")
     public ResponseEntity<ProjectDto> addProject(@RequestBody ProjectDto projectDto) {
