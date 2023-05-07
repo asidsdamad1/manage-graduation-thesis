@@ -1,17 +1,32 @@
 package utc.edu.thesis.domain.dto;
 
 import lombok.Data;
+import utc.edu.thesis.domain.entity.Reminder;
+import utc.edu.thesis.domain.entity.Session;
 import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.domain.entity.Teacher;
+import utc.edu.thesis.util.ObjectMapperUtil;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 public class ReminderDto {
     private Long id;
     private String title;
-    private LocalDateTime time;
-    private String content;
-    private Teacher teacher;
-    private Student student;
+    private String status;
+    private LocalDate start;
+    private LocalDate end;
+    private TeacherDto teacher;
+    private StudentDto student;
+    private SessionDto session;
+
+    public static ReminderDto of(Reminder entity) {
+        return ObjectMapperUtil.OBJECT_MAPPER.convertValue(entity, ReminderDto.class);
+    }
+
+    public static Reminder toEntity(ReminderDto dto) {
+        return ObjectMapperUtil.OBJECT_MAPPER.convertValue(dto, Reminder.class);
+    }
+
 }

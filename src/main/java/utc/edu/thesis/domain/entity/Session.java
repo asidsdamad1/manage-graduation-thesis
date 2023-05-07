@@ -30,6 +30,5 @@ public class Session {
     @Column(name = "status")
     private Boolean status;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Assignment> assignments;
+
 }

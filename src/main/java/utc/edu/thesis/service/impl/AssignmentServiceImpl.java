@@ -90,7 +90,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         if (StringUtils.hasText(dto.getValueSearch())) {
             List<TeacherDto> teacher = teacherService.getTeacher(new SearchDto(dto.getValueSearch(), dto.getConditionSearch()));
             if ("EMAIL".equals(dto.getConditionSearch())) {
-                whereClause += " AND e.teacher_id = " + teacher.get(0).getId();
+                whereClause += " AND e.teacher.id = " + teacher.get(0).getId();
             } else if ("SESSION".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.session.id = " + dto.getValueSearch();
             } else if ("ID".equals(dto.getConditionSearch())) {

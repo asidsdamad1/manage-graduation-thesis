@@ -1,29 +1,39 @@
 package utc.edu.thesis.domain.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reminder")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reminder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "title")
     private String title;
-    @Column(name = "time")
-    private LocalDateTime time;
-    @Column(name = "content")
-    private String content;
+    @Column(name = "status")
+    private String status;
+    @Column(name = "start_date")
+    private LocalDate start;
+    @Column(name = "end_date")
+    private LocalDate end;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @JoinColumn(name = "session_id")
+    private Session session;
 }

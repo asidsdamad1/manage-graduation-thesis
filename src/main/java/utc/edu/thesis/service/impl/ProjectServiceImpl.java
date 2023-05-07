@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import utc.edu.thesis.domain.dto.*;
 import utc.edu.thesis.domain.entity.Project;
 import utc.edu.thesis.domain.enumaration.StatusEnum;
+import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.ProjectRepository;
 import utc.edu.thesis.service.AmazonUploadService;
@@ -61,8 +62,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDto addProject(ProjectDto dto) {
         if (dto != null) {
-
-
+            List<ProjectDto> projectDtos = getProjects(new SearchDto(String.valueOf(dto.getStudent().getId()), "STUDENT"));
+            if(!projectDtos.isEmpty()) {
+                throw new BadRequestException("Student had a project");
+            }
             Project project = Project.builder()
                     .createDate(LocalDateTime.now())
                     .name(dto.getName())
@@ -72,6 +75,7 @@ public class ProjectServiceImpl implements ProjectService {
                     .session(SessionDto.toEntity(dto.getSession()))
                     .teacher(TeacherDto.toEntity(dto.getTeacher()))
                     .student(StudentDto.toEntity(dto.getStudent()))
+                    .status(0)
                     .build();
 
             projectRepository.save(project);
