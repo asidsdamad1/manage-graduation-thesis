@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 public class ReminderDto {
     private Long id;
     private String title;
-    private String status;
-    private LocalDate start;
-    private LocalDate end;
+    private String classNames;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private TeacherDto teacher;
     private StudentDto student;
     private SessionDto session;

@@ -52,7 +52,7 @@ public class ReminderServiceImpl implements ReminderService {
         if (dto != null) {
             Reminder reminder = Reminder.builder()
                     .title(dto.getTitle())
-                    .status(dto.getStatus())
+                    .classNames(dto.getClassNames())
                     .start(dto.getStart())
                     .end(dto.getEnd())
                     .teacher(TeacherDto.toEntity(dto.getTeacher()))

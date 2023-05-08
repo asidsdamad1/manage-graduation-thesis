@@ -22,12 +22,12 @@ public class Reminder {
     private Long id;
     @Column(name = "title")
     private String title;
-    @Column(name = "status")
-    private String status;
+    @Column(name = "classNames")
+    private String classNames;
     @Column(name = "start_date")
-    private LocalDate start;
+    private LocalDateTime start;
     @Column(name = "end_date")
-    private LocalDate end;
+    private LocalDateTime end;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
