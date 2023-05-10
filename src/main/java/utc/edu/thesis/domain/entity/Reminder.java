@@ -22,6 +22,8 @@ public class Reminder {
     private Long id;
     @Column(name = "title")
     private String title;
+    @Column(name = "content")
+    private String content;
     @Column(name = "classNames")
     private String classNames;
     @Column(name = "start_date")

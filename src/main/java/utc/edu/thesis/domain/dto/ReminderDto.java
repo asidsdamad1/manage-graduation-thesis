@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class ReminderDto {
     private Long id;
     private String title;
+    private String content;
     private String classNames;
     private LocalDateTime start;
     private LocalDateTime end;

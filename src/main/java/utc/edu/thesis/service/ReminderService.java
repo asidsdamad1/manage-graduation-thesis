@@ -10,4 +10,6 @@ import java.util.List;
 public interface ReminderService {
     List<ReminderDto> getReminder(SearchDto searchDto);
     ReminderDto addReminder(ReminderDto dto);
+    ReminderDto editReminder(ReminderDto dto);
+    Boolean deleteReminder(Long id);
 }
