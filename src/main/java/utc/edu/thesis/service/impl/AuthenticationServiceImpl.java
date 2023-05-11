@@ -32,6 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TeacherService teacherService;
     private final StudentService studentService;
     private final SessionService sessionService;
+    private final UserService userService;
     private final AssignmentService assignmentService;
 
     @Override
@@ -53,7 +54,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         long studentId = 0;
         long teacherId = 0;
         long sessionId = sessionService.getSessionActive().getId();
-        SearchDto searchDto = new SearchDto(userRequest.getUsername(), "EMAIL");
+
+        SearchDto searchDto = new SearchDto(userService.getUser(userRequest.getUsername()).getEmail(), "EMAIL");
         List<TeacherDto> teachers = teacherService.getTeacher(searchDto);
         List<StudentDto> student = studentService.getStudent(searchDto);
         if (!teachers.isEmpty()) {
