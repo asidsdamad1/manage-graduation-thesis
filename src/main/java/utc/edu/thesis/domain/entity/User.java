@@ -35,6 +35,8 @@ public class User implements Serializable, UserDetails {
     @Column(nullable = false)
     private String confirmPassword;
 
+    private String email;
+
     private String avatar;
 
     private boolean enabled = true;

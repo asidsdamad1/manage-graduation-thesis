@@ -6,6 +6,7 @@ import utc.edu.thesis.domain.dto.UserRequest;
 import utc.edu.thesis.domain.dto.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
+import utc.edu.thesis.domain.entity.User;
 
 @Service
 public interface UserService {
@@ -17,6 +18,8 @@ public interface UserService {
     Role saveRole(Role role);
 
     UserResponse getCurrentUser();
+
+    User getUser(String username);
 
     UserDetails getUserByUsername(String username);
 

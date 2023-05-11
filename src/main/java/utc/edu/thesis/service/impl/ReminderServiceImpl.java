@@ -54,11 +54,14 @@ public class ReminderServiceImpl implements ReminderService {
         if (dto != null) {
             Reminder reminder = Reminder.builder()
                     .title(dto.getTitle())
+                    .content(dto.getContent())
                     .classNames(dto.getClassNames())
                     .start(dto.getStart())
                     .end(dto.getEnd())
                     .teacher(TeacherDto.toEntity(dto.getTeacher()))
                     .session(SessionDto.toEntity(dto.getSession()))
+                    .session(SessionDto.toEntity(dto.getSession()))
+                    .recipient(dto.getRecipient())
                     .build();
 
             reminderRepository.save(reminder);
@@ -77,11 +80,13 @@ public class ReminderServiceImpl implements ReminderService {
         Reminder reminder = Reminder.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
+                .content(dto.getContent())
                 .classNames(dto.getClassNames())
                 .start(dto.getStart())
                 .end(dto.getEnd())
                 .teacher(TeacherDto.toEntity(dto.getTeacher()))
                 .session(SessionDto.toEntity(dto.getSession()))
+                .recipient(dto.getRecipient())
                 .build();
 
         return ReminderDto.of(reminderRepository.save(reminder));

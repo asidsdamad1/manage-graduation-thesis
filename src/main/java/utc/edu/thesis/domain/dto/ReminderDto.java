@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 public class ReminderDto {
     private Long id;
     private String title;
+    private String content;
     private String classNames;
     private LocalDateTime start;
     private LocalDateTime end;
     private TeacherDto teacher;
     private StudentDto student;
     private SessionDto session;
+    private String recipient;
 
     public static ReminderDto of(Reminder entity) {
         return ObjectMapperUtil.OBJECT_MAPPER.convertValue(entity, ReminderDto.class);
