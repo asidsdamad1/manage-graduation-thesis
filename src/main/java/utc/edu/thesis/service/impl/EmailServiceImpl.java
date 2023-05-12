@@ -29,13 +29,10 @@ public class EmailServiceImpl implements EmailService {
 
         // Try block to check for exceptions
         try {
-            // Creating a simple mail message
-            SimpleMailMessage mailMessage
-                    = new SimpleMailMessage();
             MimeMessage mimeMsg = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, true);
 
-            helper.setTo(details.getRecipient());
+            helper.setTo(details.getRecipient()[0].split(","));
             // Setting up necessary details
             helper.setSubject(details.getSubject());
             helper.setText(details.getMsgBody() + "<html><body><h1>hi welcome</h1><body></html>", true);

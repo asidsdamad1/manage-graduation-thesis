@@ -34,11 +34,11 @@ public class User implements Serializable, UserDetails {
 
     @Column(nullable = false)
     private String confirmPassword;
-
+    @Column(name = "email")
     private String email;
-
+    @Column(name = "avatar")
     private String avatar;
-
+    @Column(name = "enabled")
     private boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
