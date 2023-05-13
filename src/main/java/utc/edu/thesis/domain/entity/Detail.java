@@ -1,11 +1,18 @@
 package utc.edu.thesis.domain.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "detail")
 public class Detail {
@@ -18,6 +25,8 @@ public class Detail {
     private Integer status;
     @Column(name = "comment")
     private String comment;
+    @Column(name = "report_file")
+    private String reportFile;
     @Column(name = "start_date")
     private LocalDate startDate;
     @Column(name = "end_date")

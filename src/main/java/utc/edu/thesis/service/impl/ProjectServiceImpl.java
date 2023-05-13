@@ -63,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDto addProject(ProjectDto dto) {
         if (dto != null) {
             List<ProjectDto> projectDtos = getProjects(new SearchDto(String.valueOf(dto.getStudent().getId()), "STUDENT"));
-            if(!projectDtos.isEmpty()) {
+            if (!projectDtos.isEmpty()) {
                 throw new BadRequestException("Student had a project");
             }
             Project project = Project.builder()
@@ -86,18 +86,24 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDto addOutlineFile(Long projectId, MultipartFile file) {
+    public ProjectDto addOutlineFile(Long projectId, MultipartFile file, String type) {
         if (!file.isEmpty()) {
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> {
                         throw new NotFoundException("Can not find project with id: %lf".formatted(projectId));
                     });
 
-            String outlineFile = aws3Service.uploadFile(file);
-            project.setOutlineFile(outlineFile);
+            String uploadFile = aws3Service.uploadFile(file);
+            if ("OUTLINE".equals(type)) {
+                project.setOutlineFile(uploadFile);
+            } else if ("REPORT".equals(type)) {
+                project.setReportFile(uploadFile);
+            }
             projectRepository.save(project);
             return ProjectDto.of(project);
         }
         return null;
     }
+
+
 }

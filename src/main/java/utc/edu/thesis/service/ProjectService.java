@@ -11,5 +11,5 @@ import java.util.List;
 public interface ProjectService {
     List<ProjectDto> getProjects(SearchDto searchDto);
     ProjectDto addProject(ProjectDto projectDto);
-    ProjectDto addOutlineFile(Long projectId, MultipartFile file);
+    ProjectDto addOutlineFile(Long projectId, MultipartFile file, String type);
 }
