@@ -4,3 +4,6 @@ amazonProperties:
   secretKey: HvF/VO58s/IFeOUS2C8rxvRBf66Zc8LOCR1RiM70
   bucketName: thesisbucket
   region: ap-southeast-1
+
+firebase:
+  googleCredentials: config/firebase-service-account.json
