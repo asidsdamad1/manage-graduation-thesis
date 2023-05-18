@@ -1,17 +1,15 @@
 package utc.edu.thesis.domain.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @ToString
 @NoArgsConstructor
 public class UserRequest {
     private String username;
     private String password;
+    private String email;
+    private String role;
 
     public UserRequest(String username, String password) {
         this.username = username;
