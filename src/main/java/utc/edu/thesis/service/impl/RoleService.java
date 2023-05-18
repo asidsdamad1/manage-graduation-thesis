@@ -6,6 +6,7 @@ import utc.edu.thesis.domain.entity.Role;
 import utc.edu.thesis.repository.IRoleRepo;
 import utc.edu.thesis.service.IRoleService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +16,11 @@ public class RoleService implements IRoleService {
     @Override
     public Role findByName(String name) {
         return iRoleRepo.findByName(name);
+    }
+
+    @Override
+    public List<Role> getRoles() {
+        return iRoleRepo.findAll();
     }
 
     @Override

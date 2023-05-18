@@ -32,8 +32,6 @@ public class User implements Serializable, UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String confirmPassword;
     @Column(name = "email")
     private String email;
     @Column(name = "avatar")

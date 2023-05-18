@@ -1,11 +1,15 @@
 package utc.edu.thesis.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.springframework.data.domain.Page;
-import utc.edu.thesis.domain.dto.UserRequest;
-import utc.edu.thesis.domain.dto.UserResponse;
+import org.springframework.util.StringUtils;
+import utc.edu.thesis.domain.dto.*;
+import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.domain.entity.Role;
 import utc.edu.thesis.domain.entity.User;
+import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.IRoleRepo;
 import utc.edu.thesis.repository.IUserRepo;
 import utc.edu.thesis.service.UserService;
@@ -20,8 +24,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,10 +38,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final IUserRepo userRepo;
     private final IRoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
+    private final EntityManager entityManager;
 
-    public UserResponse getById(Long id) {
+    public UserDto getById(Long id) {
         return userRepo.findById(id)
-                .map(UserResponse::toDto)
+                .map(UserDto::of)
                 .orElseThrow(() -> {
                     throw new BadRequestException("UserId can not be found");
                 });
@@ -54,41 +63,42 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserResponse saveUser(UserRequest dto) {
+    public UserDto saveUser(UserDto dto) {
         if (dto == null) {
             return null;
         }
-        Role role = roleRepo.findByName("ROLE_USER");
-
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
+        if(userRepo.findByUsername(dto.getUsername()) != null) {
+            throw new NotFoundException("User existed");
+        }
 
         User user = User.builder()
                 .username(dto.getUsername())
+                .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
-                .roles(roles)
+                .roles(dto.getRoles())
+                .enabled(true)
                 .build();
 
-        return UserResponse.toDto(userRepo.save(user));
+        return UserDto.of(userRepo.save(user));
     }
 
     @Override
-    public UserResponse updateUser(UserRequest dto, Long id) {
-        if (id == null) {
-            throw new BadRequestException("User Id is null");
+    public UserDto updateUser(UserDto dto) {
+        if (dto == null) {
+            throw new BadRequestException("data is null");
         }
-        UserResponse responseDto = getById(id);
+        User response = userRepo.findById(dto.getId()).orElseThrow();
 
-        if (dto != null) {
-            User user = User.builder()
-                    .username(dto.getUsername())
-                    .password(passwordEncoder.encode(dto.getPassword()))
-                    .build();
-            user.setId(responseDto.getId());
+        User entity = User.builder()
+                .id(response.getId())
+                .email(dto.getEmail())
+                .username(dto.getUsername())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .roles(dto.getRoles())
+                .enabled(dto.getStatus())
+                .build();
 
-            return UserResponse.toDto(userRepo.save(user));
-        }
-        return null;
+        return UserDto.of(userRepo.save(entity));
     }
 
     @Override
@@ -102,7 +112,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new BadRequestException("User Id is null");
         }
         // throw EntityNotfoundNotFound
-        UserResponse responseDto = getById(id);
+        UserDto responseDto = getById(id);
         if (responseDto != null) {
             userRepo.deleteById(id);
             return true;
@@ -139,10 +149,32 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Page<UserResponse> getAll(int page, int size, String[] sorts) {
-        return null;
-    }
+    public List<UserDto> getUser(SearchDto dto) {
+        if (dto == null) {
+            throw new NotFoundException("not found");
+        }
 
+        String whereClause = "";
+        String orderBy = " ";
+        String sql = "select e from User as e where(1=1) ";
+        if (StringUtils.hasText(dto.getValueSearch())) {
+            if ("USERNAME".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.username like '%" + dto.getValueSearch() + "%'";
+            }
+            if ("EMAIL".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.email like '%" + dto.getValueSearch() + "%'";
+            }
+            if ("ID".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.id = " + dto.getValueSearch();
+            }
+        }
+        sql += whereClause + orderBy;
+        Query q = entityManager.createQuery(sql, User.class);
+        List<User> resultQuery = q.getResultList();
+        List<UserDto> res = new ArrayList<>();
+        resultQuery.forEach(user -> res.add(UserDto.of(user)));
+        return res;
+    }
     @Override
     public UserDetails getUserByUsername(String username) {
         return userRepo.findByUsername(username);
@@ -151,5 +183,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User getUser(String username) {
         return userRepo.findByUsername(username);
+    }
+
+    @Override
+    public List<Role> getRoles() {
+        return roleRepo.findAll();
     }
 }
