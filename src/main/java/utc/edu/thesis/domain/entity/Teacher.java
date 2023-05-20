@@ -32,6 +32,8 @@ public class Teacher {
     private String email;
     @Column(name = "password")
     private String password;
+    @Column(name = "regulation")
+    private String regulation;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
