@@ -1,11 +1,8 @@
 package utc.edu.thesis.service;
 
 import org.springframework.stereotype.Service;
-import utc.edu.thesis.domain.dto.SearchDto;
-import utc.edu.thesis.domain.dto.UserDto;
+import utc.edu.thesis.domain.dto.*;
 import utc.edu.thesis.domain.entity.Role;
-import utc.edu.thesis.domain.dto.UserRequest;
-import utc.edu.thesis.domain.dto.UserResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 import utc.edu.thesis.domain.entity.User;
 
@@ -34,4 +31,5 @@ public interface UserService {
 
     List<Role> getRoles();
 
+    Boolean changePassword(UserChangePassword request);
 }
