@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import utc.edu.thesis.domain.dto.S3File;
+import utc.edu.thesis.domain.dto.UploadImage;
 import utc.edu.thesis.service.AmazonUploadService;
 
 import java.io.File;
@@ -60,6 +61,21 @@ public class AmazonUploadServiceImpl implements AmazonUploadService {
             e.printStackTrace();
         }
         return fileUrl;
+    }
+
+    @Override
+    public UploadImage uploadImg(MultipartFile multipartFile) {
+        String fileUrl = "";
+        try {
+            File file = convertMultiPartToFile(multipartFile);
+            String fileName = generateFileName(multipartFile);
+            fileUrl = "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
+            uploadFileTos3bucket(fileName, file);
+            file.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new UploadImage(fileUrl);
     }
 
     @Override

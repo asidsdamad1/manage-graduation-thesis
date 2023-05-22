@@ -32,7 +32,7 @@ public class Teacher {
     private String email;
     @Column(name = "password")
     private String password;
-    @Column(name = "regulation")
+    @Column(name = "regulation", columnDefinition = "TEXT")
     private String regulation;
 
     @ManyToOne

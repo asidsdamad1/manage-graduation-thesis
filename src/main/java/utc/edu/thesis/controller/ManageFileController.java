@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import utc.edu.thesis.domain.dto.UploadImage;
 import utc.edu.thesis.service.AmazonUploadService;
 
 @RestController
@@ -16,8 +17,8 @@ public class ManageFileController {
     private final AmazonUploadService service;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile multipartFile) {
-        return ResponseEntity.ok(service.uploadFile(multipartFile));
+    public ResponseEntity<UploadImage> uploadFile(@RequestParam("upload")MultipartFile multipartFile) {
+        return ResponseEntity.ok(service.uploadImg(multipartFile));
     }
 
 //    @PostMapping("/upload")

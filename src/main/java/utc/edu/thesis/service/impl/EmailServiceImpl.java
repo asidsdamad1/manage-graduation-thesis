@@ -35,7 +35,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(details.getRecipient()[0].split(","));
             // Setting up necessary details
             helper.setSubject(details.getSubject());
-            helper.setText(details.getMsgBody() + "<html><body><h1>hi welcome</h1><body></html>", true);
+            helper.setText("<html><body><img style=" + "width: 100%" + " src=" + "https://thesisbucket.s3.amazonaws.com/1684744477825-logo.PNG" + " /><body></html>" + details.getMsgBody() , true);
 
             // Sending the mail
             javaMailSender.send(mimeMsg);
