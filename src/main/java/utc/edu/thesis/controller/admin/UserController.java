@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import utc.edu.thesis.domain.dto.SearchDto;
+import utc.edu.thesis.domain.dto.UserChangePassword;
 import utc.edu.thesis.domain.dto.UserDto;
+import utc.edu.thesis.domain.dto.UserRequest;
 import utc.edu.thesis.domain.entity.Role;
 import utc.edu.thesis.service.UserService;
 
@@ -34,6 +36,11 @@ public class UserController {
     @PostMapping("/delete-user/{id}")
     public ResponseEntity<Boolean> deleteUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.deleteUser(id));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Boolean> deleteUser(@RequestBody UserChangePassword request) {
+        return ResponseEntity.ok(userService.changePassword(request));
     }
 
     @GetMapping("/get-role")

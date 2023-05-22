@@ -1,5 +1,7 @@
 package utc.edu.thesis.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -11,8 +13,6 @@ import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.TeacherRepository;
 import utc.edu.thesis.service.TeacherService;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,13 +97,14 @@ public class TeacherServiceImpl implements TeacherService {
         String orderBy = " ";
         String sql = "select e from Teacher as e where(1=1) ";
         if (StringUtils.hasText(dto.getValueSearch())) {
-
             if ("NAME".equals(dto.getConditionSearch())) {
                 whereClause += "AND e.fullName like '%" + dto.getValueSearch() + "%'";
             } else if ("EMAIL".equals(dto.getConditionSearch())) {
                 whereClause += "AND e.email = '" + dto.getValueSearch() + "'";
             } else if ("PHONE".equals(dto.getConditionSearch())) {
                 whereClause += "AND e.phone like '%" + dto.getValueSearch() + "%'";
+            } else if("ID".equals(dto.getConditionSearch()))  {
+                whereClause += "AND e.id = '" + dto.getValueSearch() + "'";
             }
         }
         sql += whereClause + orderBy;
@@ -113,5 +114,21 @@ public class TeacherServiceImpl implements TeacherService {
 
         resQuery.forEach(teacher -> res.add(TeacherDto.of(teacher)));
         return res;
+    }
+
+    @Override
+    public String addRegulation(TeacherDto dto) {
+        if (dto != null) {
+            Teacher teacher = teacherRepository.findById(dto.getId()).orElseThrow(
+                    () -> {
+                        throw new NotFoundException("not found teacher with id: %d".formatted(dto.getId()));
+                    }
+                );
+
+            teacher.setRegulation(dto.getRegulation());
+            teacherRepository.save(teacher);
+            return teacher.getRegulation();
+        }
+        return null;
     }
 }

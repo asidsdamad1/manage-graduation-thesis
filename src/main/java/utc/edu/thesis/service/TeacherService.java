@@ -20,4 +20,6 @@ public interface TeacherService {
     TeacherDto editTeacher(TeacherDto dto);
 
     List<TeacherDto> getTeacher(SearchDto dto);
+
+    String addRegulation(TeacherDto dto);
 }

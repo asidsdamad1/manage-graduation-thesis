@@ -17,6 +17,7 @@ public class TeacherDto {
     private String address;
     private String phone;
     private String email;
+    private String regulation;
     private String text;
 
     public static TeacherDto of(Teacher entity) {

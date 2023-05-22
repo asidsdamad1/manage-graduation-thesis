@@ -2,17 +2,7 @@ package utc.edu.thesis.service.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.springframework.data.domain.Page;
-import org.springframework.util.StringUtils;
-import utc.edu.thesis.domain.dto.*;
-import utc.edu.thesis.domain.entity.Student;
-import utc.edu.thesis.exception.request.BadRequestException;
-import utc.edu.thesis.domain.entity.Role;
-import utc.edu.thesis.domain.entity.User;
-import utc.edu.thesis.exception.request.NotFoundException;
-import utc.edu.thesis.repository.IRoleRepo;
-import utc.edu.thesis.repository.IUserRepo;
-import utc.edu.thesis.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,14 +12,23 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import jakarta.transaction.Transactional;
+import org.springframework.util.StringUtils;
+import utc.edu.thesis.domain.dto.SearchDto;
+import utc.edu.thesis.domain.dto.UserChangePassword;
+import utc.edu.thesis.domain.dto.UserDto;
+import utc.edu.thesis.domain.dto.UserResponse;
+import utc.edu.thesis.domain.entity.Role;
+import utc.edu.thesis.domain.entity.User;
+import utc.edu.thesis.exception.request.BadRequestException;
+import utc.edu.thesis.exception.request.NotFoundException;
+import utc.edu.thesis.repository.IRoleRepo;
+import utc.edu.thesis.repository.IUserRepo;
+import utc.edu.thesis.service.UserService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (dto == null) {
             return null;
         }
-        if(userRepo.findByUsername(dto.getUsername()) != null) {
+        if (userRepo.findByUsername(dto.getUsername()) != null) {
             throw new NotFoundException("User existed");
         }
 
@@ -175,6 +174,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         resultQuery.forEach(user -> res.add(UserDto.of(user)));
         return res;
     }
+
     @Override
     public UserDetails getUserByUsername(String username) {
         return userRepo.findByUsername(username);
@@ -188,5 +188,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<Role> getRoles() {
         return roleRepo.findAll();
+    }
+
+    @Override
+    public Boolean changePassword(UserChangePassword request) {
+        UserResponse currentUser = getCurrentUser();
+        if (currentUser != null) {
+            User user = userRepo.findById(currentUser.getId()).orElseThrow(
+                    () -> {
+                        throw new NotFoundException("Not found user with id: %d".formatted(currentUser.getId()));
+
+                    }
+            );
+            if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+                return false;
+            }
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepo.save(user);
+            return true;
+        }
+        return false;
     }
 }

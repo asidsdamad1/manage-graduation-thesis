@@ -45,4 +45,5 @@ public class TeacherController {
     public ResponseEntity<List<TeacherDto>> getTeacher(@RequestBody SearchDto payload) {
         return ResponseEntity.ok(teacherService.getTeacher(payload));
     }
+
 }
