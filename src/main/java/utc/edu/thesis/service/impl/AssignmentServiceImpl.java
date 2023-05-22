@@ -98,6 +98,9 @@ public class AssignmentServiceImpl implements AssignmentService {
             } else if ("TEACHER".equals(dto.getConditionSearch())) {
                 whereClause += " AND e.student.id = " + dto.getValueSearch().split(",")[0]
                         + " AND e.session.id = " + dto.getValueSearch().split(",")[1];
+            } else if ("STUDENT".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.teacher.id = " + dto.getValueSearch().split(",")[0]
+                        + " AND e.session.id = " + dto.getValueSearch().split(",")[1];
             }
         }
         sql += whereClause + orderBy;
@@ -113,6 +116,37 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
 
         return res.stream().distinct().collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AssignmentDto> getAssignStudent(SearchDto dto) {
+        if (dto == null) {
+            throw new NotFoundException("not found");
+        }
+
+        String whereClause = "";
+        String orderBy = " ";
+        String sql = "select e from Assignment as e where(1=1) ";
+        if (StringUtils.hasText(dto.getValueSearch())) {
+            List<TeacherDto> teacher = teacherService.getTeacher(new SearchDto(dto.getValueSearch(), dto.getConditionSearch()));
+           if ("STUDENT".equals(dto.getConditionSearch())) {
+                whereClause += " AND e.teacher.id = " + dto.getValueSearch().split(",")[0]
+                        + " AND e.session.id = " + dto.getValueSearch().split(",")[1];
+            }
+        }
+        sql += whereClause + orderBy;
+        Query q = entityManager.createQuery(sql, Assignment.class);
+        List<Assignment> resultQuery = q.getResultList();
+        List<AssignmentDto> res = new ArrayList<>();
+        for (Assignment assignment : resultQuery) {
+            AssignmentDto assignmentDto = AssignmentDto.of(assignment);
+            assignmentDto.setAmount(
+                    assignmentRepository.countStudentByAssignment(
+                            assignment.getSession().getId(), assignment.getTeacher().getId()).size());
+            res.add(assignmentDto);
+        }
+
+        return res;
     }
 
     @Override

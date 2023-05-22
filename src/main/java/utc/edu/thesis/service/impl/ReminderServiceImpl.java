@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import utc.edu.thesis.domain.dto.*;
 import utc.edu.thesis.domain.entity.Reminder;
-import utc.edu.thesis.domain.entity.Student;
 import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.ReminderRepository;
+import utc.edu.thesis.service.AssignmentService;
 import utc.edu.thesis.service.ReminderService;
+import utc.edu.thesis.util.RedisUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.List;
 public class ReminderServiceImpl implements ReminderService {
     private final EntityManager entityManager;
     private final ReminderRepository reminderRepository;
+    private final RedisUtil<Integer> integerRedisUtil;
+    private final AssignmentService assignmentService;
 
     @Override
     public List<ReminderDto> getReminder(SearchDto dto) {
@@ -66,9 +69,26 @@ public class ReminderServiceImpl implements ReminderService {
 
             reminderRepository.save(reminder);
 
+            cache(dto);
             return ReminderDto.of(reminder);
         }
         return null;
+    }
+
+    private void cache(ReminderDto dto) {
+        List<AssignmentDto> assignments = assignmentService
+                .getAssignStudent(new SearchDto(dto.getTeacher().getId() + "," + dto.getSession().getId(),
+                        "STUDENT"));
+        assignments.forEach(assignment -> {
+            String studentId = String.valueOf(assignment.getStudent().getId());
+            if (integerRedisUtil.getValue(studentId) != null) {
+                Integer cacheValue = integerRedisUtil.getValue(studentId);
+                integerRedisUtil.putValue(studentId, cacheValue + 1);
+            } else {
+                integerRedisUtil.putValue(studentId, 1);
+            }
+        });
+
     }
 
     @Override
@@ -88,8 +108,9 @@ public class ReminderServiceImpl implements ReminderService {
                 .session(SessionDto.toEntity(dto.getSession()))
                 .recipient(dto.getRecipient())
                 .build();
-
-        return ReminderDto.of(reminderRepository.save(reminder));
+        reminderRepository.save(reminder);
+        cache(dto);
+        return ReminderDto.of(reminder);
     }
 
     @Override
@@ -102,5 +123,37 @@ public class ReminderServiceImpl implements ReminderService {
             }
         }
         return false;
+    }
+
+    @Override
+    public void schedulerCacheDay(ReminderDto dto) {
+        List<AssignmentDto> assignments = assignmentService
+                .getAssign(new SearchDto(dto.getTeacher().getId() + "," + dto.getSession().getId(),
+                        "STUDENT"));
+        assignments.forEach(assignment -> {
+            String studentId = String.valueOf(assignment.getStudent().getId());
+            if (integerRedisUtil.getValue(studentId +"-day") != null) {
+                Integer cacheValue = integerRedisUtil.getValue(studentId +"-day");
+                integerRedisUtil.putValue(studentId +"-day", cacheValue + 1);
+            } else {
+                integerRedisUtil.putValue(studentId +"-day", 1);
+            }
+        });
+    }
+
+    @Override
+    public void schedulerCacheHour(ReminderDto dto) {
+        List<AssignmentDto> assignments = assignmentService
+                .getAssign(new SearchDto(dto.getTeacher().getId() + "," + dto.getSession().getId(),
+                        "STUDENT"));
+        assignments.forEach(assignment -> {
+            String studentId = String.valueOf(assignment.getStudent().getId());
+            if (integerRedisUtil.getValue(studentId +"-hour") != null) {
+                Integer cacheValue = integerRedisUtil.getValue(studentId +"-hour");
+                integerRedisUtil.putValue(studentId +"-hour", cacheValue + 1);
+            } else {
+                integerRedisUtil.putValue(studentId +"-hour", 1);
+            }
+        });
     }
 }

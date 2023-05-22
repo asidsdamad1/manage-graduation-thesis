@@ -15,3 +15,19 @@ web:
 
 firebase:
   googleCredentials: config/firebase-service-account.json
+
+spring:
+  data:
+    redis: # RedisProperties
+      host: localhost
+      port: 6379
+      password: mgt
+      connect-timeout: 5000ms
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 50
+          min-idle: 5
+          max-idle: 50
+          time-between-eviction-runs: 2000
+          max-wait: 5000

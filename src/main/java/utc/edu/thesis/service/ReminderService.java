@@ -12,4 +12,6 @@ public interface ReminderService {
     ReminderDto addReminder(ReminderDto dto);
     ReminderDto editReminder(ReminderDto dto);
     Boolean deleteReminder(Long id);
+    void schedulerCacheDay(ReminderDto dto);
+    void schedulerCacheHour(ReminderDto dto);
 }

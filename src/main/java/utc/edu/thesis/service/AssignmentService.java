@@ -13,6 +13,7 @@ public interface AssignmentService {
     AssignmentDto addAssign(AssignmentDto request);
     Boolean deleteAssign(AssignmentDto assignmentDto);
     List<AssignmentDto> getAssign(SearchDto dto);
+    List<AssignmentDto> getAssignStudent(SearchDto dto);
     Integer countAssignmentBySession(Long sessionId);
     List<AssignmentDto> getStudent(Long sessionId, Long teacherId);
 
