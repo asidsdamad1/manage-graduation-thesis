@@ -16,7 +16,7 @@ import java.util.List;
 public class ReminderScheduler {
     private final ReminderService reminderService;
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 1000)
+    @Scheduled(initialDelay = 1000, fixedDelay = 600000)
     public void remindEventAfterOneDay() {
         List<ReminderDto> reminders = reminderService.getReminder(new SearchDto("", ""));
         reminders.forEach(reminder -> {
@@ -26,7 +26,7 @@ public class ReminderScheduler {
         });
     }
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 1000)
+    @Scheduled(initialDelay = 1000, fixedDelay = 600000)
     public void remindEventAfterTwoHours() {
         List<ReminderDto> reminders = reminderService.getReminder(new SearchDto("", ""));
         reminders.forEach(reminder -> {
