@@ -38,9 +38,4 @@ public class Student {
     @ManyToOne
     @JoinColumn(name = "class_id")
     private StudentClass studentClass;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
-
 }

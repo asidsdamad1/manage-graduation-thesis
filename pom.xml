@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>utc.edu</groupId>
-    <artifactId>HoNgheo</artifactId>
+    <artifactId>QLDA</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>manager-thesis</name>
     <description>manager thesis</description>

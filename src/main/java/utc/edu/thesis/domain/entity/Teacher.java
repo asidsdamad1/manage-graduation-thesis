@@ -34,9 +34,4 @@ public class Teacher {
     private String password;
     @Column(name = "regulation", columnDefinition = "TEXT")
     private String regulation;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
-
 }
