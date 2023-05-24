@@ -51,17 +51,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         int expired = jwtUtils.getJwtExpirationInMs();
         final String jwtRefresh = jwtUtils.generateRefreshToken(userDetails);
 
-        long studentId = 0;
-        long teacherId = 0;
-        long sessionId = sessionService.getSessionActive().getId();
+        long studentId = 0, teacherId = 0, sessionId = 0;
+        if (!"admin".equals(userRequest.getUsername())) {
+            sessionId = sessionService.getSessionActive().getId();
+        }
 
-        SearchDto searchDto = new SearchDto(userService.getUser(userRequest.getUsername()).getEmail(), "EMAIL");
+        String email = userService.getUser(userRequest.getUsername()).getEmail() != null
+                ? userService.getUser(userRequest.getUsername()).getEmail() : "admin";
+        SearchDto searchDto = new SearchDto(email, "EMAIL");
         List<TeacherDto> teachers = teacherService.getTeacher(searchDto);
         List<StudentDto> student = studentService.getStudent(searchDto);
         if (!teachers.isEmpty()) {
             teacherId = teachers.get(0).getId();
         }
-        if(!student.isEmpty()) {
+        if (!student.isEmpty()) {
             studentId = student.get(0).getId();
             teacherId = assignmentService
                     .getAssign(new SearchDto("%d,%d".formatted(studentId, sessionId), "TEACHER"))
