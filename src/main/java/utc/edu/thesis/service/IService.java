@@ -9,6 +9,6 @@ public interface IService<T> {
 
     Optional<T> findById(Long id);
 
-    void delete(Long id);
+    Boolean delete(Long id);
 
 }
