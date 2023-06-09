@@ -12,7 +12,6 @@ public interface DetailService {
     DetailDto getDetailById(Long id);
     DetailDto addDetail(DetailDto dto);
     DetailDto editDetail(DetailDto dto);
-
     Boolean deleteDetail(Long id);
     DetailDto deleteFileDetail(Long detailId);
     DetailDto addFileDetail(Long detailId, MultipartFile file, String type);

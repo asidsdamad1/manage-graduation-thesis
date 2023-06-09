@@ -135,7 +135,7 @@ public class StudentServiceImpl implements StudentService {
     public StudentDto findByCode(String code) {
         return studentRepository.findByCode(code)
                 .map(StudentDto::of).orElseThrow(() -> {
-                    throw new NotFoundException("not found student wiht code: %s".formatted(code));
+                    throw new NotFoundException("not found student with code: %s".formatted(code));
                 });
     }
 }

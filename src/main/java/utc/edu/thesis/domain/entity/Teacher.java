@@ -30,8 +30,6 @@ public class Teacher {
     private String phone;
     @Column(name = "email")
     private String email;
-    @Column(name = "password")
-    private String password;
     @Column(name = "regulation", columnDefinition = "TEXT")
     private String regulation;
 }

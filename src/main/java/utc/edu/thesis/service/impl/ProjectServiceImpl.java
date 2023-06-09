@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import utc.edu.thesis.domain.dto.*;
+import utc.edu.thesis.domain.entity.Detail;
 import utc.edu.thesis.domain.entity.Project;
 import utc.edu.thesis.domain.enumaration.StatusEnum;
 import utc.edu.thesis.exception.request.BadRequestException;
@@ -15,6 +16,7 @@ import utc.edu.thesis.repository.ProjectRepository;
 import utc.edu.thesis.service.AmazonUploadService;
 import utc.edu.thesis.service.ProjectService;
 import utc.edu.thesis.service.SessionService;
+import utc.edu.thesis.service.StudentService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final AmazonUploadService aws3Service;
     private final SessionService sessionService;
     private final EntityManager entityManager;
+    private final StudentService studentService;
 
     @Override
     public List<ProjectDto> getProjects(SearchDto dto) {
@@ -45,6 +48,9 @@ public class ProjectServiceImpl implements ProjectService {
                 whereClause += "AND e.student.id = " + dto.getValueSearch()
                         + " AND e.session.id = " + sessionService.getSessionActive().getId();
             }
+            if ("ID".equals(dto.getConditionSearch())) {
+                whereClause += "AND e.id = " + dto.getValueSearch();
+            }
         }
         sql += whereClause + orderBy;
         Query q = entityManager.createQuery(sql, Project.class);
@@ -62,11 +68,19 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDto addProject(ProjectDto dto) {
         if (dto != null) {
+            Project project = new Project();
             List<ProjectDto> projectDtos = getProjects(new SearchDto(String.valueOf(dto.getStudent().getId()), "STUDENT"));
             if (!projectDtos.isEmpty()) {
                 throw new BadRequestException("Student had a project");
             }
-            Project project = Project.builder()
+            if (dto.getStudent().getCode() != null) {
+                dto.setStudent(studentService.findByCode(dto.getStudent().getCode()));
+                project = projectRepository.findByStudentCode(dto.getStudent().getCode());
+            }
+            if (project != null) {
+                throw new BadRequestException("Student had project");
+            }
+            project = Project.builder()
                     .createDate(LocalDateTime.now())
                     .name(dto.getName())
                     .outlineFile(dto.getOutlineFile())
@@ -75,7 +89,7 @@ public class ProjectServiceImpl implements ProjectService {
                     .session(SessionDto.toEntity(dto.getSession()))
                     .teacher(TeacherDto.toEntity(dto.getTeacher()))
                     .student(StudentDto.toEntity(dto.getStudent()))
-                    .status(0)
+                    .status(1)
                     .build();
 
             projectRepository.save(project);
@@ -83,6 +97,29 @@ public class ProjectServiceImpl implements ProjectService {
             return ProjectDto.of(project);
         }
         return null;
+    }
+
+    @Override
+    public ProjectDto editProject(ProjectDto dto) {
+        if(dto.getId() == null) {
+            throw new BadRequestException("Id is null");
+
+        }
+        Project project = Project.builder()
+                .id(dto.getId())
+                .createDate(LocalDateTime.now())
+                .name(dto.getName())
+                .outlineFile(dto.getOutlineFile())
+                .reportFile(dto.getReportFile())
+                .topic(TopicDto.toEntity(dto.getTopic()))
+                .session(SessionDto.toEntity(dto.getSession()))
+                .teacher(TeacherDto.toEntity(dto.getTeacher()))
+                .student(StudentDto.toEntity(dto.getStudent()))
+                .status(1)
+                .build();
+
+        projectRepository.save(project);
+        return ProjectDto.of(project);
     }
 
     @Override
@@ -105,5 +142,47 @@ public class ProjectServiceImpl implements ProjectService {
         return null;
     }
 
+    @Override
+    public Boolean deleteProject(Long id) {
+        if (id != null) {
+            Project res = projectRepository.findById(id).orElseThrow(
+                    () -> {
+                        throw new NotFoundException("Not found project with id: %d".formatted(id));
+                    }
+            );
+            projectRepository.delete(res);
+            return true;
+        }
+        return false;
+    }
 
+    @Override
+    public Boolean deleteFileReport(Long projectId) {
+        if(projectId != null) {
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> {
+                        throw new NotFoundException("Can not find project with id: %d".formatted(projectId));
+                    });
+
+            project.setReportFile(null);
+            projectRepository.save(project);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean deleteFileOutline(Long projectId) {
+        if(projectId != null) {
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> {
+                        throw new NotFoundException("Can not find project with id: %d".formatted(projectId));
+                    });
+
+            project.setOutlineFile(null);
+            projectRepository.save(project);
+            return true;
+        }
+        return false;
+    }
 }

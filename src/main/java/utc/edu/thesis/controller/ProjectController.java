@@ -24,9 +24,29 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.addProject(projectDto));
     }
 
+    @PostMapping("/edit-project")
+    public ResponseEntity<ProjectDto> editProject(@RequestBody ProjectDto projectDto) {
+        return ResponseEntity.ok(projectService.editProject(projectDto));
+    }
+
     @PostMapping("/get-projects")
     public ResponseEntity<List<ProjectDto>> getProject(@RequestBody SearchDto searchDto) {
         return ResponseEntity.ok(projectService.getProjects(searchDto));
+    }
+
+    @PostMapping("/delete-project/{id}")
+    public ResponseEntity<Boolean> getProject(@PathVariable Long id) {
+        return ResponseEntity.ok(projectService.deleteProject(id));
+    }
+
+    @PostMapping("/delete-file-report/{id}")
+    public ResponseEntity<Boolean> deleteFileReport(@PathVariable Long id) {
+        return ResponseEntity.ok(projectService.deleteFileReport(id));
+    }
+
+    @PostMapping("/delete-file-outline/{id}")
+    public ResponseEntity<Boolean> deleteFileOutline(@PathVariable Long id) {
+        return ResponseEntity.ok(projectService.deleteFileOutline(id));
     }
 
     @PostMapping(value = "/add-outline-file", consumes = {"multipart/form-data"})

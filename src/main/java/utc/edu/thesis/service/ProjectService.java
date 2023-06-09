@@ -11,5 +11,10 @@ import java.util.List;
 public interface ProjectService {
     List<ProjectDto> getProjects(SearchDto searchDto);
     ProjectDto addProject(ProjectDto projectDto);
+    ProjectDto editProject(ProjectDto projectDto);
     ProjectDto addOutlineFile(Long projectId, MultipartFile file, String type);
+//    ProjectDto deleteFile(Long projectId, MultipartFile file, String type);
+    Boolean deleteProject(Long projectId);
+    Boolean deleteFileReport(Long projectId);
+    Boolean deleteFileOutline(Long projectId);
 }
