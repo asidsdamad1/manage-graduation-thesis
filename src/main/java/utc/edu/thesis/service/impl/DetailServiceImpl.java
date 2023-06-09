@@ -4,13 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import utc.edu.thesis.domain.dto.DetailDto;
+import utc.edu.thesis.domain.dto.EmailDetails;
 import utc.edu.thesis.domain.dto.ProjectDto;
+import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.domain.entity.Detail;
 import utc.edu.thesis.domain.entity.Project;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.DetailRepository;
 import utc.edu.thesis.service.AmazonUploadService;
 import utc.edu.thesis.service.DetailService;
+import utc.edu.thesis.service.EmailService;
+import utc.edu.thesis.service.ProjectService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,8 @@ import java.util.List;
 public class DetailServiceImpl implements DetailService {
     private final DetailRepository detailRepository;
     private final AmazonUploadService aws3Serivce;
+    private final EmailService emailService;
+    private final ProjectService projectService;
 
     @Override
     public List<DetailDto> getDetail(Long id) {
@@ -82,6 +88,16 @@ public class DetailServiceImpl implements DetailService {
                     .project(dto.getProject())
                     .reportFile(dto.getReportFile())
                     .build();
+
+            if(dto.getComment() != null) {
+                ProjectDto project = projectService.getProjects(new SearchDto(String.valueOf(detail.getProject().getId()) , "ID")).get(0);
+                EmailDetails emailDetails = EmailDetails.builder()
+                        .msgBody(dto.getComment())
+                        .recipient(new String[]{project.getStudent().getEmail()})
+                        .subject("Giảng viên đã nhận xét về đồ án của bạn")
+                        .build();
+                emailService.sendSimpleMail(emailDetails);
+            }
 
             detail = detailRepository.save(detail);
             return DetailDto.of(detail);

@@ -1,6 +1,6 @@
 package utc.edu.thesis.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import utc.edu.thesis.domain.entity.Role;
 import utc.edu.thesis.repository.IRoleRepo;
@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class RoleService implements IRoleService {
-    @Autowired
-    private IRoleRepo iRoleRepo;
+    private final IRoleRepo iRoleRepo;
+
     @Override
     public Role findByName(String name) {
         return iRoleRepo.findByName(name);
@@ -25,7 +26,10 @@ public class RoleService implements IRoleService {
 
     @Override
     public Role save(Role role) {
-        return iRoleRepo.save(role);
+        if (role != null && findByName(role.getName()) == null) {
+            return iRoleRepo.save(role);
+        }
+        return null;
     }
 
     @Override
@@ -39,7 +43,11 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public void delete(Long id) {
-        iRoleRepo.deleteById(id);
+    public Boolean delete(Long id) {
+        if (id != null) {
+            iRoleRepo.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

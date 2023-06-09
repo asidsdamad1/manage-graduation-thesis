@@ -34,7 +34,11 @@ public class OldPasswordService implements IOldPasswordService {
     }
 
     @Override
-    public void delete(Long id) {
-        iOldPasswordRepo.deleteById(id);
+    public Boolean delete(Long id) {
+        if (id != null) {
+            iOldPasswordRepo.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
