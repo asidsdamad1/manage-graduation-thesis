@@ -10,7 +10,7 @@ import java.util.List;
 public interface StudentClassService {
     StudentClass findByNameAndCourse(String name, Integer course);
 
-    List<StudentClass> getAll();
+    List<Integer> getAll();
 
     List<StudentClass> getStudentClass(SearchDto dto);
 

@@ -21,7 +21,7 @@ spring:
     redis: # RedisProperties
       host: localhost
       port: 6379
-      password:
+      password: mgt
       connect-timeout: 5000ms
       timeout: 5000ms
       lettuce:
