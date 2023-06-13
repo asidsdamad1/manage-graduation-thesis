@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import utc.edu.thesis.domain.dto.DetailDto;
 import utc.edu.thesis.domain.dto.ProjectDto;
+import utc.edu.thesis.domain.dto.ProjectSearchDto;
 import utc.edu.thesis.domain.dto.SearchDto;
 import utc.edu.thesis.service.DetailService;
 import utc.edu.thesis.service.ProjectService;
@@ -32,6 +33,11 @@ public class ProjectController {
     @PostMapping("/get-projects")
     public ResponseEntity<List<ProjectDto>> getProject(@RequestBody SearchDto searchDto) {
         return ResponseEntity.ok(projectService.getProjects(searchDto));
+    }
+
+    @PostMapping("/get-projects-filter")
+    public ResponseEntity<List<ProjectDto>> getProjectFilter(@RequestBody ProjectSearchDto searchDto) {
+        return ResponseEntity.ok(projectService.getProjectsFilter(searchDto));
     }
 
     @PostMapping("/delete-project/{id}")

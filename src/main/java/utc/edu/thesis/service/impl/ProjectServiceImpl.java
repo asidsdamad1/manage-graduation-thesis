@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import utc.edu.thesis.domain.dto.*;
-import utc.edu.thesis.domain.entity.Detail;
 import utc.edu.thesis.domain.entity.Project;
 import utc.edu.thesis.domain.enumaration.StatusEnum;
 import utc.edu.thesis.exception.request.BadRequestException;
@@ -101,7 +100,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDto editProject(ProjectDto dto) {
-        if(dto.getId() == null) {
+        if (dto.getId() == null) {
             throw new BadRequestException("Id is null");
 
         }
@@ -158,7 +157,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Boolean deleteFileReport(Long projectId) {
-        if(projectId != null) {
+        if (projectId != null) {
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> {
                         throw new NotFoundException("Can not find project with id: %d".formatted(projectId));
@@ -173,7 +172,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Boolean deleteFileOutline(Long projectId) {
-        if(projectId != null) {
+        if (projectId != null) {
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> {
                         throw new NotFoundException("Can not find project with id: %d".formatted(projectId));
@@ -184,5 +183,53 @@ public class ProjectServiceImpl implements ProjectService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<ProjectDto> getProjectsFilter(ProjectSearchDto dto) {
+        if (dto == null) {
+            throw new NotFoundException("not found");
+        }
+
+        String whereClause = "";
+        String orderBy = " ";
+        String sql = "select e from Project as e where(1=1) ";
+
+        if (StringUtils.hasText(dto.getProjectName())) {
+            whereClause += " AND e.name like '%" + dto.getProjectName() + "%'";
+        }
+        if (StringUtils.hasText(dto.getStudentName())) {
+            whereClause += " AND e.student.name like '%" + dto.getStudentName() + "%'";
+        }
+        if (StringUtils.hasText(dto.getStudentCode())) {
+            whereClause += " AND e.student.code like '%" + dto.getStudentCode() + "%'";
+        }
+        if (!dto.getCourse().isEmpty()) {
+            whereClause += " AND e.student.studentClass.course in (" + org.apache.tomcat.util.buf.StringUtils.join(dto.getCourse(), ',') + ")";
+        }
+        if (!dto.getStudentClass().isEmpty()) {
+            whereClause += " AND e.student.studentClass.id in (" + org.apache.tomcat.util.buf.StringUtils.join(dto.getStudentClass(), ',') + ")";
+        }
+        if (!dto.getSession().isEmpty()) {
+            whereClause += " AND e.session.id in (" + org.apache.tomcat.util.buf.StringUtils.join(dto.getSession(), ',') + ")";
+        }
+        if (!dto.getTopic().isEmpty()) {
+            whereClause += " AND e.topic.id in (" + org.apache.tomcat.util.buf.StringUtils.join(dto.getTopic(), ',') + ")";
+        }
+        if (!dto.getStatus().isEmpty()) {
+            whereClause += " AND e.status in (" + org.apache.tomcat.util.buf.StringUtils.join(dto.getStatus(), ',') + ")";
+        }
+
+        sql += whereClause + orderBy;
+        Query q = entityManager.createQuery(sql, Project.class);
+        List<Project> resQuery = q.getResultList();
+        List<ProjectDto> res = new ArrayList<>();
+
+        resQuery.forEach(project -> {
+            ProjectDto projectDto = ProjectDto.of(project);
+            projectDto.setStatus(StatusEnum.values()[project.getStatus()]);
+            res.add(projectDto);
+        });
+        return res;
     }
 }

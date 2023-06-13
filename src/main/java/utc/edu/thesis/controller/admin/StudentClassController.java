@@ -16,8 +16,8 @@ import java.util.List;
 public class StudentClassController {
     private final StudentClassService service;
 
-    @GetMapping("/get-all-class")
-    public ResponseEntity<List<StudentClass>> getAll() {
+    @GetMapping("/get-course")
+    public ResponseEntity<List<Integer>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
