@@ -196,13 +196,13 @@ public class ProjectServiceImpl implements ProjectService {
         String sql = "select e from Project as e where(1=1) ";
 
         if (StringUtils.hasText(dto.getProjectName())) {
-            whereClause += " AND e.name like '%" + dto.getProjectName() + "%'";
+            whereClause += " AND UPPER(e.name) like UPPER('%" + dto.getProjectName() + "%')";
         }
         if (StringUtils.hasText(dto.getStudentName())) {
-            whereClause += " AND e.student.name like '%" + dto.getStudentName() + "%'";
+            whereClause += " AND UPPER(e.student.fullName) like UPPER('%" + dto.getStudentName() + "%')";
         }
         if (StringUtils.hasText(dto.getStudentCode())) {
-            whereClause += " AND e.student.code like '%" + dto.getStudentCode() + "%'";
+            whereClause += " AND UPPER(e.student.code) like UPPER('%" + dto.getStudentCode() + "%')";
         }
         if (!dto.getCourse().isEmpty()) {
             whereClause += " AND e.student.studentClass.course in (" + org.apache.tomcat.util.buf.StringUtils.join(dto.getCourse(), ',') + ")";
