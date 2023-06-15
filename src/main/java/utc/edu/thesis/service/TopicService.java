@@ -11,4 +11,7 @@ import java.util.List;
 public interface TopicService {
 
     List<TopicDto> getTopic(SearchDto dto);
+    TopicDto editTopic(TopicDto dto);
+    TopicDto addTopic(TopicDto dto);
+    Boolean deleteTopic(Long id);
 }

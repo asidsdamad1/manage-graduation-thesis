@@ -5,13 +5,16 @@ import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import utc.edu.thesis.domain.dto.SearchDto;
-import utc.edu.thesis.domain.dto.TopicDto;
+import utc.edu.thesis.domain.dto.*;
+import utc.edu.thesis.domain.entity.Project;
 import utc.edu.thesis.domain.entity.Topic;
+import utc.edu.thesis.exception.request.BadRequestException;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.TopicRepository;
 import utc.edu.thesis.service.TopicService;
+import utc.edu.thesis.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,7 @@ import java.util.List;
 public class TopicServiceImpl implements TopicService {
     private final EntityManager entityManager;
     private final TopicRepository topicRepository;
+    private final UserService userService;
 
     @Override
     public List<TopicDto> getTopic(SearchDto dto) {
@@ -42,5 +46,52 @@ public class TopicServiceImpl implements TopicService {
         topics.forEach(res -> resultList.add(TopicDto.of(res)));
 
         return resultList;
+    }
+
+    @Override
+    public TopicDto addTopic(TopicDto dto) {
+        if (dto != null) {
+            Topic topic = Topic.builder()
+                    .createdDate(LocalDateTime.now())
+                    .name(dto.getName())
+                    .createdBy(userService.getCurrentUser().getUsername())
+                    .build();
+
+            topicRepository.save(topic);
+
+            return TopicDto.of(topic);
+        }
+        return null;
+    }
+
+    @Override
+    public TopicDto editTopic(TopicDto dto) {
+        if (dto.getId() == null) {
+            throw new BadRequestException("Id is null");
+
+        }
+        Topic project = Topic.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .createdDate(dto.getCreatedDate())
+                .createdBy(dto.getCreatedBy())
+                .build();
+
+        topicRepository.save(project);
+        return TopicDto.of(project);
+    }
+
+    @Override
+    public Boolean deleteTopic(Long id) {
+        if (id != null) {
+            Topic res = topicRepository.findById(id).orElseThrow(
+                    () -> {
+                        throw new NotFoundException("Not found topic with id: %d".formatted(id));
+                    }
+            );
+            topicRepository.delete(res);
+            return true;
+        }
+        return false;
     }
 }

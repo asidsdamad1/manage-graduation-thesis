@@ -8,6 +8,7 @@ services:
     environment:
       - MYSQL_DATABASE=thesis_management
       - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_ROOT_HOST=localhost
     ports:
       - '3306:3306'
     volumes:

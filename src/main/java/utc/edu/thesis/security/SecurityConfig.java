@@ -37,7 +37,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/signin", "/api/token/refresh").permitAll()
                 .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/admin/users").hasAnyAuthority("ROLE_ADMIN")
                 .requestMatchers("/**").authenticated()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

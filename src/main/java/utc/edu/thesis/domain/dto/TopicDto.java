@@ -4,10 +4,14 @@ import lombok.Data;
 import utc.edu.thesis.domain.entity.Topic;
 import utc.edu.thesis.util.ObjectMapperUtil;
 
+import java.time.LocalDateTime;
+
 @Data
 public class TopicDto {
     private Long id;
     private String name;
+    private LocalDateTime createdDate;
+    private String createdBy;
 
 
     public static TopicDto of(Topic entity) {
