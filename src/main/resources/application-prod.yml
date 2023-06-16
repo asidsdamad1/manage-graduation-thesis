@@ -1,0 +1,90 @@
+server:
+  port: 8088
+  servlet:
+    context-path: /api
+
+spring:
+  data:
+    redis: # RedisProperties
+      host: containers-us-west-160.railway.app
+      port: 6586
+      password: OVckXlqinWXpfqtbnnv2
+      connect-timeout: 5000ms
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 50
+          min-idle: 5
+          max-idle: 50
+          time-between-eviction-runs: 2000
+          max-wait: 5000
+  datasource:
+    url: jdbc:mysql://containers-us-west-182.railway.app:7943/thesis?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: VNWQ0EWKglre0xOuNOtu
+    driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: ${SPRING_JPA_HIBERNATE_DIALECT:}
+        id:
+          new_generator_mappings: false
+        show.sql: true
+        format_sql: true
+        hb2dll:
+          auto: update
+  generate-ddl: true
+
+#Email
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth : true
+          socketFactory.fallback :  false
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+      debug: true
+    username: emailfortest612@gmail.com
+    password: hvnjmnpwnowpyiio
+
+
+  servlet:
+    multipart:
+     max-file-size: 10MB
+     max-request-size: 10MB
+
+confirmAccountLink: ${LINK_CONFIRM:}
+forgotPasswordLink: ${LINK_FORGOT_PASSWORD}
+#SecretPsw
+application:
+  jwt:
+    secretKey: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
+    tokenPrefix : Bearer
+    expirationDateInMs : 9000000
+    refreshExpirationDateInMs : 9000000
+
+
+
+amazonProperties:
+  endpointUrl: https://s3.ap-southeast-1.amazonaws.com
+  accessKey: AKIA4IQR3FNC2Q4P656T
+  secretKey: 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
+  bucketName: thesisbucket
+  region: ap-southeast-1
+
+web:
+  cors:
+    allowed-origins: "http://localhost:3000"
+    allowed-methods: GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD
+    max-age: 3600
+    allowed-headers: "Requestor-Type"
+    exposed-headers: "X-Get-Header"
+
+firebase:
+  googleCredentials: config/firebase-service-account.json
