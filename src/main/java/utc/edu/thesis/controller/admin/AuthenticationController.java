@@ -12,7 +12,6 @@ import utc.edu.thesis.service.AuthenticationService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class AuthenticationController {
     private final AuthenticationService service;
 

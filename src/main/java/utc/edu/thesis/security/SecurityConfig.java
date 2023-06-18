@@ -35,9 +35,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/signin", "/api/token/refresh").permitAll()
-                .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/admin/users").hasAnyAuthority("ROLE_ADMIN")
+                .requestMatchers("/signin", "/token/refresh", "/admin/get-teacher-by-id", "/admin/get-student").permitAll()
+                .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                .requestMatchers("/admin/users").hasAnyAuthority("ROLE_ADMIN")
                 .requestMatchers("/**").authenticated()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
