@@ -78,16 +78,29 @@ public class DetailServiceImpl implements DetailService {
                         throw new NotFoundException("Can not found project with id: %d".formatted(dto.getId()));
                     });
 
-            detail = Detail.builder()
-                    .id(dto.getId())
-                    .title(dto.getTitle())
-                    .status(dto.getStatus())
-                    .comment(dto.getComment())
-                    .startDate(dto.getStartDate())
-                    .endDate(dto.getEndDate())
-                    .project(dto.getProject())
-                    .reportFile(dto.getReportFile())
-                    .build();
+            if(dto.getReportFile().isBlank()) {
+                detail = Detail.builder()
+                        .id(dto.getId())
+                        .title(dto.getTitle())
+                        .status(dto.getStatus())
+                        .comment(dto.getComment())
+                        .startDate(dto.getStartDate())
+                        .endDate(dto.getEndDate())
+                        .project(dto.getProject())
+                        .build();
+            } else {
+                detail = Detail.builder()
+                        .id(dto.getId())
+                        .title(dto.getTitle())
+                        .status(dto.getStatus())
+                        .comment(dto.getComment())
+                        .startDate(dto.getStartDate())
+                        .endDate(dto.getEndDate())
+                        .project(dto.getProject())
+                        .reportFile(dto.getReportFile())
+                        .build();
+            }
+
 
             if(dto.getComment() != null) {
                 ProjectDto project = projectService.getProjects(new SearchDto(String.valueOf(detail.getProject().getId()) , "ID")).get(0);
