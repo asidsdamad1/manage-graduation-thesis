@@ -27,7 +27,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     @Query("select e from Assignment e where e.session.id = ?1 and e.student.code=?2")
     List<Assignment> getStudentBySession(Long sessionId, String studentCode);
 
-    @Query("select e from Assignment e where e.teacher.id=?1 and e.status = true")
+    @Query("select e from Assignment e where e.teacher.id=?1")
     List<Assignment> getStudentByTeacher(Long teacherId);
 
     @Modifying
