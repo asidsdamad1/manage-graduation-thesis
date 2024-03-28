@@ -4,24 +4,24 @@ server:
     context-path: /api
 
 spring:
-  data:
-    redis: # RedisProperties
-      host: containers-us-west-160.railway.app
-      port: 6586
-      password: OVckXlqinWXpfqtbnnv2
-      connect-timeout: 5000ms
-      timeout: 5000ms
-      lettuce:
-        pool:
-          max-active: 50
-          min-idle: 5
-          max-idle: 50
-          time-between-eviction-runs: 2000
-          max-wait: 5000
+#  data:
+#    redis: # RedisProperties
+#      host: containers-us-west-160.railway.app
+#      port: 6586
+#      password: OVckXlqinWXpfqtbnnv2
+#      connect-timeout: 5000ms
+#      timeout: 5000ms
+#      lettuce:
+#        pool:
+#          max-active: 50
+#          min-idle: 5
+#          max-idle: 50
+#          time-between-eviction-runs: 2000
+#          max-wait: 5000
   datasource:
-    url: jdbc:mysql://containers-us-west-182.railway.app:7943/thesis?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/thesis_management?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: VNWQ0EWKglre0xOuNOtu
+    password: 123456
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
@@ -88,3 +88,6 @@ web:
 
 firebase:
   googleCredentials: config/firebase-service-account.json
+logging:
+  level:
+    org.springframework.security: TRACE

@@ -5,23 +5,27 @@ amazonProperties:
   bucketName: thesisbucket
   region: ap-southeast-1
 
-web:
-  cors:
-    allowed-origins: "http://localhost:3000"
-    allowed-methods: GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD
-    max-age: 3600
-    allowed-headers: "Requestor-Type"
-    exposed-headers: "X-Get-Header"
+#web:
+#  cors:
+#    allowed-origins: "http://localhost:3000"
+#    allowed-methods: GET, POST, PATCH, PUT, DELETE, OPTIONS, HEAD
+#    max-age: 3600
+#    allowed-headers: "Requestor-Type"
+#    exposed-headers: "X-Get-Header"
 
 firebase:
   googleCredentials: config/firebase-service-account.json
 
 spring:
+  application:
+    name: hdfs-event
+  profiles:
+    active: prod
   data:
     redis: # RedisProperties
       host: localhost
       port: 6379
-      password: mgt
+      password:
       connect-timeout: 5000ms
       timeout: 5000ms
       lettuce:
