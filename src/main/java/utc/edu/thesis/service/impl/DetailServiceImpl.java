@@ -11,11 +11,9 @@ import utc.edu.thesis.domain.entity.Detail;
 import utc.edu.thesis.domain.entity.Project;
 import utc.edu.thesis.exception.request.NotFoundException;
 import utc.edu.thesis.repository.DetailRepository;
-import utc.edu.thesis.service.AmazonUploadService;
-import utc.edu.thesis.service.DetailService;
-import utc.edu.thesis.service.EmailService;
-import utc.edu.thesis.service.ProjectService;
+import utc.edu.thesis.service.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +22,7 @@ import java.util.List;
 public class DetailServiceImpl implements DetailService {
     private final DetailRepository detailRepository;
     private final AmazonUploadService aws3Serivce;
+    private final CloudinaryService cloudinaryService;
     private final EmailService emailService;
     private final ProjectService projectService;
 
@@ -156,7 +155,12 @@ public class DetailServiceImpl implements DetailService {
                         throw new NotFoundException("Can not find project with id: %lf".formatted(detailId));
                     });
 
-            String uploadFile = aws3Serivce.uploadFile(file);
+            String uploadFile = null;
+            try {
+                uploadFile = cloudinaryService.uploadFile(file).getUrl();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             detail.setReportFile(uploadFile);
             detail = detailRepository.save(detail);
             return DetailDto.of(detail);

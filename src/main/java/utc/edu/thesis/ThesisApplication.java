@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.function.RouterFunction;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.function.ServerResponse;
 import static org.springframework.web.servlet.function.RequestPredicates.path;
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 
+@EnableWebMvc
 @EnableScheduling
 @SpringBootApplication
 @EnableJpaRepositories
@@ -32,18 +34,19 @@ public class ThesisApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
+                        .allowedOrigins("http://localhost:63342", "http://localhost:8080")  // Be more specific
                         .allowedMethods("*")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .allowCredentials(true);  // Important for handling credentials
             }
-            @Override
-            public void addViewControllers(ViewControllerRegistry registry) {
-                // forward requests to /admin and /user to their index.html
-                registry.addViewController("/chat").setViewName(
-                        "forward:/index.html");
-                registry.addViewController("/chat1").setViewName(
-                        "forward:/static/index.html");
-            }
+//            @Override
+//            public void addViewControllers(ViewControllerRegistry registry) {
+//                // forward requests to /admin and /user to their index.html
+//                registry.addViewController("/chat").setViewName(
+//                        "forward:/index.html");
+//                registry.addViewController("/chat1").setViewName(
+//                        "forward:/static/index.html");
+//            }
         };
     }
 

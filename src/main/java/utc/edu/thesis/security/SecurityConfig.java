@@ -35,7 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/signin", "/api/token/refresh", "/chat", "/chat1").permitAll()
+                .requestMatchers("/signin", "/api/token/refresh", "/chat", "/websocket/**", "/chat1","/api/file/upload/cloudinary", "/file/upload/cloudinary").permitAll()
                 .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
                 .requestMatchers("/**").authenticated()
                 .anyRequest().authenticated()

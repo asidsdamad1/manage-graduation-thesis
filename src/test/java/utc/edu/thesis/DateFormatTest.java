@@ -9,6 +9,7 @@ public class DateFormatTest {
 
     @Test
     void contextLoads() {
-        System.out.println(LocalDateTime.now());
+
+        System.out.println("100" + (-5));
     }
 }

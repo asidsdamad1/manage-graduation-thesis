@@ -41,7 +41,7 @@ function connect(event) {
       usernamePage.classList.add("hidden");
       chatPage.classList.remove("hidden");
 
-      var socket = new SockJS("/websocket");
+      var socket = new SockJS("http://localhost:8088/api/websocket");
       stompClient = Stomp.over(socket);
 
       stompClient.connect({}, onConnected, onError);
